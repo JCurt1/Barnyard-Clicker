@@ -36,16 +36,9 @@
     background-image:
       radial-gradient(ellipse at 20% 80%, rgba(74,124,63,0.8) 0%, transparent 50%),
       radial-gradient(ellipse at 80% 20%, rgba(106,173,90,0.6) 0%, transparent 50%),
-      repeating-linear-gradient(
-        45deg,
-        transparent,
-        transparent 40px,
-        rgba(0,0,0,0.03) 40px,
-        rgba(0,0,0,0.03) 41px
-      );
+      repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(0,0,0,0.03) 40px, rgba(0,0,0,0.03) 41px);
   }
 
-  /* ── HEADER ── */
   header {
     background: var(--red-barn);
     border-bottom: 4px solid var(--soil);
@@ -56,44 +49,26 @@
     position: sticky; top: 0; z-index: 100;
     box-shadow: 0 4px 12px var(--shadow);
   }
-  header h1 {
-    font-size: 1.8rem;
-    color: var(--cream);
-    letter-spacing: 0.05em;
-    text-shadow: 2px 2px 0 var(--soil);
-  }
+  header h1 { font-size: 1.8rem; color: var(--cream); letter-spacing: 0.05em; text-shadow: 2px 2px 0 var(--soil); }
   header h1 span { color: var(--hay-light); }
-
   #money-display {
     font-family: 'Courier Prime', monospace;
-    font-size: 1.4rem;
-    font-weight: 700;
+    font-size: 1.4rem; font-weight: 700;
     color: var(--hay-light);
     background: var(--soil);
-    padding: 6px 16px;
-    border-radius: 4px;
+    padding: 6px 16px; border-radius: 4px;
     border: 2px solid var(--hay);
     text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
-    min-width: 130px;
-    text-align: right;
+    min-width: 130px; text-align: right;
   }
+  #day-display { color: var(--parchment); font-size: 0.9rem; font-style: italic; opacity: 0.85; }
 
-  #day-display {
-    color: var(--parchment);
-    font-size: 0.9rem;
-    font-style: italic;
-    opacity: 0.85;
-  }
-
-  /* ── LAYOUT ── */
   .game-wrap {
     display: grid;
-    grid-template-columns: 280px 1fr 260px;
-    gap: 0;
+    grid-template-columns: 290px 1fr 280px;
     min-height: calc(100vh - 60px);
   }
 
-  /* ── SIDEBAR PANELS ── */
   .panel {
     background: var(--panel);
     border-right: 3px solid var(--bark);
@@ -104,17 +79,14 @@
   .panel.right { border-right: none; border-left: 3px solid var(--bark); }
 
   .panel-title {
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
+    font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.15em; text-transform: uppercase;
     color: var(--bark);
     border-bottom: 2px solid var(--hay);
-    padding-bottom: 6px;
-    margin-bottom: 12px;
+    padding-bottom: 6px; margin-bottom: 12px;
   }
 
-  /* ── ANIMAL CARDS ── */
+  /* ANIMAL CARDS */
   .animal-card {
     background: var(--cream);
     border: 2px solid var(--hay);
@@ -129,324 +101,292 @@
   .animal-card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px var(--shadow); border-color: var(--bark); }
   .animal-card:active { transform: scale(0.97); }
   .animal-card.clicking { animation: clk 0.15s ease; }
+  .animal-card.locked { opacity: 0.55; cursor: default; filter: grayscale(0.4); }
+  .animal-card.locked:hover { transform: none; box-shadow: none; }
 
-  @keyframes clk {
-    0% { transform: scale(1); }
-    50% { transform: scale(0.93); }
-    100% { transform: scale(1); }
-  }
+  @keyframes clk { 0%{transform:scale(1)} 50%{transform:scale(0.93)} 100%{transform:scale(1)} }
 
-  .animal-header {
+  .animal-header { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+  .animal-emoji { font-size: 1.6rem; line-height: 1; }
+  .animal-name { font-weight: 700; font-size: 1rem; flex: 1; }
+
+  .housing-bar {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 6px;
+    gap: 6px;
+    margin-bottom: 5px;
   }
-  .animal-emoji { font-size: 1.6rem; line-height: 1; }
-  .animal-name { font-weight: 700; font-size: 1rem; }
-  .animal-count {
-    margin-left: auto;
-    font-family: 'Courier Prime', monospace;
-    font-weight: 700;
-    font-size: 1rem;
-    background: var(--bark);
-    color: var(--cream);
-    padding: 1px 8px;
-    border-radius: 3px;
-    min-width: 30px;
-    text-align: center;
-  }
-
-  .animal-stats {
-    font-size: 0.78rem;
+  .housing-label {
+    font-size: 0.72rem;
     color: var(--muted);
-    font-style: italic;
+    white-space: nowrap;
   }
+  .slots-row {
+    display: flex;
+    gap: 3px;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+  .slot {
+    width: 14px; height: 14px;
+    border-radius: 2px;
+    border: 1.5px solid var(--bark);
+    background: var(--parchment);
+    transition: background 0.2s;
+  }
+  .slot.filled { background: var(--bark); }
+  .slot.capacity { background: var(--hay-light); border-color: var(--hay); }
+
+  .animal-stats { font-size: 0.76rem; color: var(--muted); font-style: italic; }
   .animal-stats strong { color: var(--bark); font-style: normal; }
 
+  .produce-progress { height: 4px; background: #ddd; border-radius: 2px; overflow: hidden; margin-top: 5px; }
+  .produce-fill { height: 100%; background: var(--grass); border-radius: 2px; transition: width 0.5s linear; }
+
   .produce-flash {
-    position: absolute;
-    top: -12px; right: 8px;
+    position: absolute; top: -12px; right: 8px;
     font-family: 'Courier Prime', monospace;
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--grass);
-    pointer-events: none;
+    font-size: 0.85rem; font-weight: 700;
+    color: var(--grass); pointer-events: none;
     animation: floatUp 0.9s ease forwards;
   }
-  @keyframes floatUp {
-    0% { opacity: 1; transform: translateY(0); }
-    100% { opacity: 0; transform: translateY(-28px); }
+  @keyframes floatUp { 0%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(-28px)} }
+
+  .locked-msg {
+    font-size: 0.74rem;
+    color: var(--red-barn);
+    font-style: italic;
+    margin-top: 3px;
   }
 
-  /* ── CENTER: FARM ── */
-  .farm-center {
-    padding: 20px;
-    position: relative;
-    overflow-y: auto;
-    max-height: calc(100vh - 60px);
-  }
+  /* CENTER */
+  .farm-center { padding: 20px; overflow-y: auto; max-height: calc(100vh - 60px); }
 
   .farm-scene {
     background: linear-gradient(180deg, var(--sky) 0%, #c8e8a0 35%, var(--grass-light) 100%);
     border: 3px solid var(--soil);
     border-radius: 8px;
     padding: 20px;
-    min-height: 260px;
+    min-height: 220px;
     position: relative;
     overflow: hidden;
     box-shadow: 0 4px 20px var(--shadow);
     margin-bottom: 16px;
   }
-
   .sun {
-    position: absolute;
-    top: 12px; right: 20px;
+    position: absolute; top: 12px; right: 20px;
     width: 44px; height: 44px;
     background: radial-gradient(circle, #ffe87a 40%, #ffcc00 100%);
     border-radius: 50%;
     box-shadow: 0 0 20px rgba(255,220,0,0.6);
     animation: sunPulse 3s ease-in-out infinite;
   }
-  @keyframes sunPulse { 0%,100% { box-shadow: 0 0 20px rgba(255,220,0,0.6); } 50% { box-shadow: 0 0 35px rgba(255,220,0,0.9); } }
+  @keyframes sunPulse { 0%,100%{box-shadow:0 0 20px rgba(255,220,0,0.6)} 50%{box-shadow:0 0 35px rgba(255,220,0,0.9)} }
 
-  .barn {
-    position: absolute;
-    bottom: 20px; right: 30px;
-    font-size: 3.5rem;
-    line-height: 1;
-    filter: drop-shadow(2px 3px 0 rgba(0,0,0,0.3));
-    transition: font-size 0.4s ease;
+  .farm-buildings {
+    position: absolute; bottom: 16px; right: 16px;
+    display: flex; gap: 8px; align-items: flex-end;
+    flex-wrap: wrap; justify-content: flex-end;
+    max-width: 50%;
   }
+  .farm-building {
+    text-align: center;
+    font-size: 0.6rem;
+    color: var(--bark);
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .farm-building .bicon { font-size: 2rem; display: block; filter: drop-shadow(1px 2px 0 rgba(0,0,0,0.25)); }
 
   .farm-animals-display {
-    position: absolute;
-    bottom: 24px;
-    left: 20px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    max-width: 55%;
+    position: absolute; bottom: 20px; left: 16px;
+    display: flex; flex-wrap: wrap; gap: 5px;
+    max-width: 45%;
   }
   .farm-animal-icon {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     animation: bounce 2s ease-in-out infinite;
     display: inline-block;
-    cursor: default;
   }
-  .farm-animal-icon:nth-child(2n) { animation-delay: 0.3s; }
-  .farm-animal-icon:nth-child(3n) { animation-delay: 0.6s; }
-  .farm-animal-icon:nth-child(4n) { animation-delay: 0.9s; }
-  @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+  .farm-animal-icon:nth-child(2n){animation-delay:0.3s}
+  .farm-animal-icon:nth-child(3n){animation-delay:0.6s}
+  .farm-animal-icon:nth-child(4n){animation-delay:0.9s}
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
 
-  .farm-title-label {
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--bark);
-    font-style: italic;
-    margin-bottom: 4px;
-  }
-
-  /* ── TABS ── */
-  .tabs {
-    display: flex;
-    gap: 4px;
-    margin-bottom: 14px;
-  }
+  /* TABS */
+  .tabs { display: flex; gap: 4px; margin-bottom: 14px; }
   .tab-btn {
-    flex: 1;
-    padding: 8px 6px;
+    flex: 1; padding: 8px 6px;
     background: var(--parchment);
     border: 2px solid var(--hay);
     border-radius: 4px 4px 0 0;
     font-family: 'Lora', serif;
-    font-size: 0.8rem;
-    font-weight: 700;
-    cursor: pointer;
-    color: var(--muted);
-    transition: all 0.15s;
-    letter-spacing: 0.05em;
+    font-size: 0.78rem; font-weight: 700;
+    cursor: pointer; color: var(--muted);
+    transition: all 0.15s; letter-spacing: 0.04em;
   }
   .tab-btn:hover { background: var(--cream); color: var(--ink); }
-  .tab-btn.active { background: var(--cream); color: var(--bark); border-bottom-color: var(--cream); border-color: var(--bark); }
+  .tab-btn.active { background: var(--cream); color: var(--bark); border-color: var(--bark); border-bottom-color: var(--cream); }
 
   .tab-content { display: none; }
   .tab-content.active { display: block; }
 
-  /* ── INVENTORY ── */
-  .inventory-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 12px;
-  }
+  /* INVENTORY */
+  .inventory-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
   .inv-item {
-    background: var(--cream);
-    border: 2px solid var(--hay);
-    border-radius: 5px;
-    padding: 8px 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    background: var(--cream); border: 2px solid var(--hay);
+    border-radius: 5px; padding: 8px 10px;
+    display: flex; align-items: center; gap: 8px;
   }
   .inv-icon { font-size: 1.3rem; }
   .inv-info { flex: 1; }
-  .inv-name { font-size: 0.75rem; font-weight: 700; color: var(--bark); }
+  .inv-name { font-size: 0.72rem; font-weight: 700; color: var(--bark); }
   .inv-qty { font-family: 'Courier Prime', monospace; font-size: 1rem; font-weight: 700; }
 
-  /* ── SELL / CRAFT BUTTONS ── */
   .sell-btn, .craft-btn {
-    width: 100%;
-    padding: 8px;
-    border: none;
-    border-radius: 4px;
-    font-family: 'Lora', serif;
-    font-weight: 700;
-    font-size: 0.82rem;
-    cursor: pointer;
-    margin-top: 6px;
-    transition: all 0.15s;
-    letter-spacing: 0.03em;
+    width: 100%; padding: 8px;
+    border: none; border-radius: 4px;
+    font-family: 'Lora', serif; font-weight: 700;
+    font-size: 0.82rem; cursor: pointer;
+    margin-top: 6px; transition: all 0.15s; letter-spacing: 0.03em;
   }
-  .sell-btn {
-    background: var(--grass);
-    color: var(--cream);
-    border: 2px solid var(--soil);
-  }
+  .sell-btn { background: var(--grass); color: var(--cream); border: 2px solid var(--soil); }
   .sell-btn:hover { background: var(--grass-light); }
   .sell-btn:disabled { opacity: 0.4; cursor: default; }
-
-  .craft-btn {
-    background: var(--hay);
-    color: var(--soil);
-    border: 2px solid var(--bark);
-  }
+  .craft-btn { background: var(--hay); color: var(--soil); border: 2px solid var(--bark); }
   .craft-btn:hover { background: var(--hay-light); }
   .craft-btn:disabled { opacity: 0.4; cursor: default; }
 
-  /* ── SHOP / UPGRADES ── */
-  .shop-item {
+  /* CRAFT */
+  .craft-card {
+    background: var(--cream); border: 2px solid var(--hay);
+    border-radius: 6px; padding: 10px 12px; margin-bottom: 10px;
+  }
+  .craft-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .craft-card-name { font-weight: 700; font-size: 0.92rem; flex: 1; }
+  .craft-sell-price { font-family: 'Courier Prime', monospace; font-size: 0.88rem; color: var(--gold); font-weight: 700; }
+  .craft-req { font-size: 0.74rem; color: var(--muted); margin-bottom: 6px; }
+
+  /* SHOP — RIGHT PANEL */
+  .shop-section-title {
+    font-size: 0.68rem; font-weight: 700;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--bark);
+    border-bottom: 2px solid var(--hay);
+    padding-bottom: 5px; margin: 12px 0 10px;
+  }
+  .shop-section-title:first-child { margin-top: 0; }
+
+  /* Housing tiers within each animal section */
+  .housing-section {
     background: var(--cream);
     border: 2px solid var(--hay);
     border-radius: 6px;
     padding: 10px 12px;
     margin-bottom: 10px;
   }
-  .shop-item-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 4px;
+  .housing-section-header {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
   }
-  .shop-item-name { font-weight: 700; font-size: 0.95rem; flex: 1; }
-  .shop-item-cost {
+  .hs-emoji { font-size: 1.4rem; }
+  .hs-name { font-weight: 700; font-size: 0.95rem; flex: 1; }
+  .hs-animal-cost {
     font-family: 'Courier Prime', monospace;
-    font-weight: 700;
+    font-weight: 700; font-size: 0.88rem;
     color: var(--gold);
-    font-size: 0.95rem;
   }
-  .shop-item-desc { font-size: 0.75rem; color: var(--muted); font-style: italic; margin-bottom: 8px; }
 
-  .buy-btn {
-    width: 100%;
-    padding: 7px;
-    background: var(--red-barn);
-    color: var(--cream);
-    border: 2px solid var(--soil);
-    border-radius: 4px;
-    font-family: 'Lora', serif;
-    font-weight: 700;
-    font-size: 0.82rem;
-    cursor: pointer;
-    transition: all 0.15s;
+  .animal-buy-row {
+    display: flex; align-items: center;
+    gap: 6px; margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed var(--hay);
   }
-  .buy-btn:hover { background: #a02828; }
-  .buy-btn:disabled { opacity: 0.4; cursor: default; }
-
-  /* ── LOG ── */
-  #log {
-    font-size: 0.78rem;
-    color: var(--muted);
+  .animal-buy-row .occupancy {
+    font-size: 0.74rem; color: var(--muted); flex: 1;
     font-style: italic;
-    max-height: 120px;
-    overflow-y: auto;
-    border-top: 1px solid var(--hay);
-    padding-top: 8px;
-    margin-top: 8px;
   }
-  #log div { margin-bottom: 3px; }
+  .animal-buy-row .occupancy strong { color: var(--bark); font-style: normal; }
+
+  .buy-animal-btn, .buy-housing-btn {
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-family: 'Lora', serif; font-weight: 700;
+    font-size: 0.78rem; cursor: pointer;
+    transition: all 0.15s; border: 2px solid var(--soil);
+    white-space: nowrap;
+  }
+  .buy-animal-btn { background: var(--grass); color: var(--cream); }
+  .buy-animal-btn:hover { background: var(--grass-light); }
+  .buy-animal-btn:disabled { opacity: 0.4; cursor: default; }
+
+  .buy-housing-btn { background: var(--red-barn); color: var(--cream); width: 100%; padding: 7px; }
+  .buy-housing-btn:hover { background: #a02828; }
+  .buy-housing-btn:disabled { opacity: 0.4; cursor: default; }
+
+  .housing-tier-row {
+    margin-bottom: 5px;
+  }
+  .tier-label {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.78rem; color: var(--ink); margin-bottom: 4px;
+  }
+  .tier-label .tier-icon { font-size: 1rem; }
+  .tier-label .tier-name { flex: 1; font-weight: 600; }
+  .tier-label .tier-cap {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.8rem; color: var(--muted);
+  }
+  .tier-label .tier-cost { font-family: 'Courier Prime', monospace; font-weight: 700; color: var(--gold); font-size: 0.82rem; }
+  .tier-owned { color: var(--grass); font-weight: 700; font-size: 0.8rem; }
+  .tier-owned-badge {
+    background: var(--grass); color: var(--cream);
+    border-radius: 3px; padding: 1px 6px;
+    font-size: 0.7rem; font-weight: 700;
+  }
+
+  /* upgrades */
+  .upg-card {
+    background: var(--cream); border: 2px solid var(--hay);
+    border-radius: 6px; padding: 10px 12px; margin-bottom: 10px;
+  }
+  .upg-card.owned { border-color: var(--grass); opacity: 0.7; }
+  .upg-header { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+  .upg-name { font-weight: 700; font-size: 0.9rem; flex: 1; }
+  .upg-cost { font-family: 'Courier Prime', monospace; font-weight: 700; color: var(--gold); }
+  .upg-desc { font-size: 0.74rem; color: var(--muted); font-style: italic; margin-bottom: 7px; }
+  .buy-upg-btn {
+    width: 100%; padding: 6px;
+    background: var(--bark); color: var(--cream);
+    border: 2px solid var(--soil); border-radius: 4px;
+    font-family: 'Lora', serif; font-weight: 700;
+    font-size: 0.78rem; cursor: pointer; transition: all 0.15s;
+  }
+  .buy-upg-btn:hover { background: #7a4520; }
+  .buy-upg-btn:disabled { opacity: 0.4; cursor: default; }
+
+  /* log */
+  #log { font-size: 0.76rem; color: var(--muted); font-style: italic; max-height: 200px; overflow-y: auto; }
+  #log div { margin-bottom: 3px; padding: 2px 0; border-bottom: 1px solid rgba(200,180,150,0.3); }
   #log div:first-child { color: var(--bark); font-style: normal; font-weight: 600; }
 
-  /* ── CRAFT SECTION ── */
-  .craft-card {
-    background: var(--cream);
-    border: 2px solid var(--hay);
-    border-radius: 6px;
-    padding: 10px 12px;
-    margin-bottom: 10px;
-  }
-  .craft-card-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 4px;
-  }
-  .craft-card-name { font-weight: 700; font-size: 0.95rem; flex: 1; }
-  .craft-sell-price { font-family: 'Courier Prime', monospace; font-size: 0.9rem; color: var(--gold); font-weight: 700; }
-  .craft-req { font-size: 0.75rem; color: var(--muted); margin-bottom: 6px; }
-
-  /* ── PROGRESS BAR ── */
-  .produce-progress {
-    height: 4px;
-    background: #ddd;
-    border-radius: 2px;
-    overflow: hidden;
-    margin-top: 4px;
-  }
-  .produce-fill {
-    height: 100%;
-    background: var(--grass);
-    border-radius: 2px;
-    transition: width 0.5s linear;
-  }
-
-  /* ── NOTIFICATION ── */
   #notif {
-    position: fixed;
-    bottom: 20px; left: 50%;
+    position: fixed; bottom: 20px; left: 50%;
     transform: translateX(-50%);
-    background: var(--soil);
-    color: var(--cream);
-    padding: 10px 24px;
-    border-radius: 6px;
-    font-family: 'Courier Prime', monospace;
-    font-size: 0.95rem;
-    z-index: 999;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
-    border: 2px solid var(--hay);
+    background: var(--soil); color: var(--cream);
+    padding: 10px 24px; border-radius: 6px;
+    font-family: 'Courier Prime', monospace; font-size: 0.92rem;
+    z-index: 999; opacity: 0; pointer-events: none;
+    transition: opacity 0.3s; border: 2px solid var(--hay);
     white-space: nowrap;
   }
   #notif.show { opacity: 1; }
 
-  scrollbar-width: thin;
+  hr.div { border: none; border-top: 1px dashed var(--hay); margin: 10px 0; }
+
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: var(--parchment); }
   ::-webkit-scrollbar-thumb { background: var(--hay); border-radius: 3px; }
-
-  .section-divider {
-    border: none;
-    border-top: 1px dashed var(--hay);
-    margin: 12px 0;
-  }
-
-  .upgrade-owned {
-    background: #e8f5e8;
-    border-color: var(--grass);
-    opacity: 0.7;
-  }
-  .upgrade-owned .buy-btn { background: var(--grass); }
 </style>
 </head>
 <body>
@@ -461,45 +401,35 @@
 
 <div class="game-wrap">
 
-  <!-- LEFT: Animals -->
+  <!-- LEFT: Active Animals -->
   <div class="panel" id="animals-panel">
     <div class="panel-title">Your Animals</div>
     <div id="animals-list"></div>
-    <hr class="section-divider">
-    <div class="panel-title">Click to Collect!</div>
-    <div style="font-size:0.78rem;color:var(--muted);font-style:italic;line-height:1.5;">
-      Click an animal to collect its produce. Animals also auto-produce over time.
-    </div>
   </div>
 
   <!-- CENTER -->
   <div class="farm-center">
-    <!-- Scene -->
     <div class="farm-scene">
       <div class="sun"></div>
-      <div class="barn" id="barn-icon">🏚️</div>
+      <div class="farm-buildings" id="farm-buildings"></div>
       <div class="farm-animals-display" id="farm-display"></div>
     </div>
 
-    <!-- Tabs -->
     <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('inventory')">📦 Inventory</button>
-      <button class="tab-btn" onclick="switchTab('craft')">🍳 Craft</button>
-      <button class="tab-btn" onclick="switchTab('log')">📜 Log</button>
+      <button class="tab-btn active" onclick="switchTab('inventory',this)">📦 Inventory</button>
+      <button class="tab-btn" onclick="switchTab('craft',this)">🍳 Craft</button>
+      <button class="tab-btn" onclick="switchTab('log',this)">📜 Log</button>
     </div>
 
-    <!-- Inventory Tab -->
     <div class="tab-content active" id="tab-inventory">
       <div class="inventory-grid" id="inventory-grid"></div>
       <button class="sell-btn" onclick="sellAll()" id="sell-all-btn">Sell All Raw Goods</button>
     </div>
 
-    <!-- Craft Tab -->
     <div class="tab-content" id="tab-craft">
       <div id="craft-list"></div>
     </div>
 
-    <!-- Log Tab -->
     <div class="tab-content" id="tab-log">
       <div id="log"></div>
     </div>
@@ -507,7 +437,6 @@
 
   <!-- RIGHT: Shop -->
   <div class="panel right" id="shop-panel">
-    <div class="panel-title">Market & Upgrades</div>
     <div id="shop-list"></div>
   </div>
 
@@ -516,228 +445,170 @@
 <div id="notif"></div>
 
 <script>
-// ══════════════════════════════════════════════
-//  GAME STATE
-// ══════════════════════════════════════════════
-const state = {
-  money: 10,
-  day: 1,
-  inventory: {},
-  animals: {},
-  upgrades: {},
-  totalEarned: 0,
-};
+// ══════════════════════════════════════════════════════════
+//  DATA DEFINITIONS
+// ══════════════════════════════════════════════════════════
 
-// ── ANIMALS ──
-const ANIMALS = {
+// Housing tiers per animal type
+// Each tier: { id, name, icon, capacity (cumulative slots added), cost }
+const HOUSING = {
   chicken: {
-    name: 'Chicken', emoji: '🐔',
-    produces: [{ item: 'eggs', min: 1, max: 3 }],
-    interval: 8,    // seconds per auto-produce
-    clickYield: 1,
-    baseCost: 10,
-    costMult: 1.4,
-    desc: 'Lays eggs. Cluck.',
+    animalCost: 5,
+    tiers: [
+      { id: 'chicken_coop_s',  name: 'Small Coop',    icon: '🏠', capacity: 3,  cost: 0   }, // free starter
+      { id: 'chicken_coop_m',  name: 'Medium Coop',   icon: '🏡', capacity: 6,  cost: 80  },
+      { id: 'chicken_coop_l',  name: 'Large Coop',    icon: '🏰', capacity: 12, cost: 250 },
+      { id: 'chicken_coop_xl', name: 'Mega Coop',     icon: '🏯', capacity: 20, cost: 700 },
+    ]
   },
   cow: {
-    name: 'Cow', emoji: '🐄',
-    produces: [{ item: 'milk', min: 1, max: 2 }],
-    interval: 15,
-    clickYield: 1,
-    baseCost: 60,
-    costMult: 1.5,
-    desc: 'Produces milk daily.',
+    animalCost: 40,
+    tiers: [
+      { id: 'cow_pen_s',  name: 'Small Pasture', icon: '⛺', capacity: 2,  cost: 120  },
+      { id: 'cow_pen_m',  name: 'Dairy Barn',    icon: '🏠', capacity: 5,  cost: 350  },
+      { id: 'cow_pen_l',  name: 'Large Dairy',   icon: '🏡', capacity: 10, cost: 900  },
+      { id: 'cow_pen_xl', name: 'Grand Dairy',   icon: '🏰', capacity: 18, cost: 2500 },
+    ]
   },
   sheep: {
-    name: 'Sheep', emoji: '🐑',
-    produces: [{ item: 'wool', min: 1, max: 2 }],
-    interval: 20,
-    clickYield: 1,
-    baseCost: 80,
-    costMult: 1.5,
-    desc: 'Grows soft wool.',
-  },
-  pig: {
-    name: 'Pig', emoji: '🐷',
-    produces: [{ item: 'truffles', min: 1, max: 1 }],
-    interval: 30,
-    clickYield: 1,
-    baseCost: 150,
-    costMult: 1.6,
-    desc: 'Sniffs out rare truffles.',
+    animalCost: 35,
+    tiers: [
+      { id: 'sheep_pen_s',  name: 'Sheep Pen',     icon: '⛺', capacity: 2,  cost: 100  },
+      { id: 'sheep_pen_m',  name: 'Wool Shed',     icon: '🏠', capacity: 5,  cost: 300  },
+      { id: 'sheep_pen_l',  name: 'Shearing Barn', icon: '🏡', capacity: 10, cost: 850  },
+      { id: 'sheep_pen_xl', name: 'Wool Ranch',    icon: '🏰', capacity: 18, cost: 2200 },
+    ]
   },
   bee: {
-    name: 'Beehive', emoji: '🐝',
-    produces: [{ item: 'honey', min: 1, max: 2 }],
-    interval: 12,
-    clickYield: 1,
-    baseCost: 120,
-    costMult: 1.55,
-    desc: 'Buzzes, makes honey.',
+    animalCost: 30,
+    tiers: [
+      { id: 'bee_yard_s',  name: 'Starter Apiary', icon: '🪵', capacity: 3,  cost: 90   },
+      { id: 'bee_yard_m',  name: 'Bee Garden',     icon: '🌳', capacity: 8,  cost: 280  },
+      { id: 'bee_yard_l',  name: 'Honey Grove',    icon: '🌲', capacity: 15, cost: 750  },
+      { id: 'bee_yard_xl', name: 'Royal Apiary',   icon: '🏡', capacity: 25, cost: 1800 },
+    ]
+  },
+  pig: {
+    animalCost: 60,
+    tiers: [
+      { id: 'pig_sty_s',  name: 'Pig Sty',       icon: '⛺', capacity: 2,  cost: 180  },
+      { id: 'pig_sty_m',  name: 'Muddy Pen',      icon: '🏠', capacity: 5,  cost: 500  },
+      { id: 'pig_sty_l',  name: 'Truffle Farm',   icon: '🏡', capacity: 10, cost: 1400 },
+      { id: 'pig_sty_xl', name: 'Grand Piggery',  icon: '🏰', capacity: 16, cost: 3500 },
+    ]
   },
   goat: {
-    name: 'Goat', emoji: '🐐',
-    produces: [{ item: 'goatmilk', min: 1, max: 2 }],
-    interval: 14,
-    clickYield: 1,
-    baseCost: 200,
-    costMult: 1.6,
-    desc: 'Fancy goat milk.',
+    animalCost: 50,
+    tiers: [
+      { id: 'goat_pen_s',  name: 'Goat Pen',      icon: '⛺', capacity: 2,  cost: 150  },
+      { id: 'goat_pen_m',  name: 'Goat Yard',     icon: '🏠', capacity: 5,  cost: 420  },
+      { id: 'goat_pen_l',  name: 'Goat Barn',     icon: '🏡', capacity: 10, cost: 1100 },
+      { id: 'goat_pen_xl', name: 'Goat Ranch',    icon: '🏰', capacity: 18, cost: 2800 },
+    ]
   },
 };
 
-// ── ITEMS ──
+const ANIMALS = {
+  chicken: { name: 'Chicken',  emoji: '🐔', produces: [{item:'eggs',     min:1, max:3}], interval: 8,  clickYield: 1 },
+  cow:     { name: 'Cow',      emoji: '🐄', produces: [{item:'milk',     min:1, max:2}], interval: 15, clickYield: 1 },
+  sheep:   { name: 'Sheep',    emoji: '🐑', produces: [{item:'wool',     min:1, max:2}], interval: 20, clickYield: 1 },
+  bee:     { name: 'Beehive',  emoji: '🐝', produces: [{item:'honey',    min:1, max:2}], interval: 12, clickYield: 1 },
+  pig:     { name: 'Pig',      emoji: '🐷', produces: [{item:'truffles', min:1, max:1}], interval: 30, clickYield: 1 },
+  goat:    { name: 'Goat',     emoji: '🐐', produces: [{item:'goatmilk', min:1, max:2}], interval: 14, clickYield: 1 },
+};
+
 const ITEMS = {
-  eggs:      { name: 'Eggs',        emoji: '🥚', sellPrice: 2 },
-  milk:      { name: 'Milk',        emoji: '🥛', sellPrice: 4 },
-  wool:      { name: 'Wool',        emoji: '🧶', sellPrice: 5 },
-  truffles:  { name: 'Truffles',    emoji: '🍄', sellPrice: 20 },
-  honey:     { name: 'Honey',       emoji: '🍯', sellPrice: 8 },
-  goatmilk:  { name: 'Goat Milk',   emoji: '🫙', sellPrice: 6 },
-  omelette:  { name: 'Omelette',    emoji: '🍳', sellPrice: 12 },
-  cheese:    { name: 'Cheese',      emoji: '🧀', sellPrice: 18 },
-  sweater:   { name: 'Sweater',     emoji: '🧥', sellPrice: 40 },
-  cake:      { name: 'Cake',        emoji: '🎂', sellPrice: 55 },
+  eggs:       { name: 'Eggs',          emoji: '🥚', sellPrice: 2  },
+  milk:       { name: 'Milk',          emoji: '🥛', sellPrice: 4  },
+  wool:       { name: 'Wool',          emoji: '🧶', sellPrice: 5  },
+  truffles:   { name: 'Truffles',      emoji: '🍄', sellPrice: 20 },
+  honey:      { name: 'Honey',         emoji: '🍯', sellPrice: 8  },
+  goatmilk:   { name: 'Goat Milk',     emoji: '🫙', sellPrice: 6  },
+  omelette:   { name: 'Omelette',      emoji: '🍳', sellPrice: 12 },
+  cheese:     { name: 'Cheese',        emoji: '🧀', sellPrice: 18 },
+  sweater:    { name: 'Sweater',       emoji: '🧥', sellPrice: 40 },
+  cake:       { name: 'Honey Cake',    emoji: '🎂', sellPrice: 55 },
   truffle_omelette: { name: 'Truffle Omelette', emoji: '🍽️', sellPrice: 80 },
-  goat_cheese: { name: 'Goat Cheese', emoji: '🫕', sellPrice: 35 },
-  mead:      { name: 'Mead',        emoji: '🍺', sellPrice: 60 },
+  goat_cheese:{ name: 'Goat Cheese',   emoji: '🫕', sellPrice: 35 },
+  mead:       { name: 'Mead',          emoji: '🍺', sellPrice: 60 },
 };
 
-// ── RECIPES ──
 const RECIPES = [
-  {
-    id: 'omelette',
-    name: 'Omelette',
-    emoji: '🍳',
-    ingredients: { eggs: 3 },
-    result: { item: 'omelette', qty: 1 },
-    desc: '3 eggs → 1 Omelette',
-  },
-  {
-    id: 'cheese',
-    name: 'Cheese',
-    emoji: '🧀',
-    ingredients: { milk: 4 },
-    result: { item: 'cheese', qty: 1 },
-    desc: '4 milk → 1 Cheese',
-  },
-  {
-    id: 'sweater',
-    name: 'Sweater',
-    emoji: '🧥',
-    ingredients: { wool: 6 },
-    result: { item: 'sweater', qty: 1 },
-    desc: '6 wool → 1 Sweater',
-  },
-  {
-    id: 'cake',
-    name: 'Honey Cake',
-    emoji: '🎂',
-    ingredients: { eggs: 4, honey: 3 },
-    result: { item: 'cake', qty: 1 },
-    desc: '4 eggs + 3 honey → Cake',
-  },
-  {
-    id: 'truffle_omelette',
-    name: 'Truffle Omelette',
-    emoji: '🍽️',
-    ingredients: { eggs: 5, truffles: 1 },
-    result: { item: 'truffle_omelette', qty: 1 },
-    desc: '5 eggs + 1 truffle',
-  },
-  {
-    id: 'goat_cheese',
-    name: 'Goat Cheese',
-    emoji: '🫕',
-    ingredients: { goatmilk: 4 },
-    result: { item: 'goat_cheese', qty: 1 },
-    desc: '4 goat milk → Goat Cheese',
-  },
-  {
-    id: 'mead',
-    name: 'Mead',
-    emoji: '🍺',
-    ingredients: { honey: 6 },
-    result: { item: 'mead', qty: 1 },
-    desc: '6 honey → Mead',
-  },
+  { id:'omelette',          name:'Omelette',          emoji:'🍳', ingredients:{eggs:3},            result:{item:'omelette',qty:1},          desc:'3 eggs' },
+  { id:'cheese',            name:'Cheese',            emoji:'🧀', ingredients:{milk:4},             result:{item:'cheese',qty:1},            desc:'4 milk' },
+  { id:'sweater',           name:'Sweater',           emoji:'🧥', ingredients:{wool:6},             result:{item:'sweater',qty:1},           desc:'6 wool' },
+  { id:'cake',              name:'Honey Cake',        emoji:'🎂', ingredients:{eggs:4,honey:3},     result:{item:'cake',qty:1},              desc:'4 eggs + 3 honey' },
+  { id:'truffle_omelette',  name:'Truffle Omelette',  emoji:'🍽️', ingredients:{eggs:5,truffles:1}, result:{item:'truffle_omelette',qty:1},  desc:'5 eggs + 1 truffle' },
+  { id:'goat_cheese',       name:'Goat Cheese',       emoji:'🫕', ingredients:{goatmilk:4},         result:{item:'goat_cheese',qty:1},       desc:'4 goat milk' },
+  { id:'mead',              name:'Mead',              emoji:'🍺', ingredients:{honey:6},            result:{item:'mead',qty:1},              desc:'6 honey' },
 ];
 
-// ── SHOP ITEMS ──
-const SHOP = [
-  { id: 'chicken', type: 'animal' },
-  { id: 'cow',     type: 'animal' },
-  { id: 'sheep',   type: 'animal' },
-  { id: 'bee',     type: 'animal' },
-  { id: 'pig',     type: 'animal' },
-  { id: 'goat',    type: 'animal' },
-  {
-    id: 'better_barn',
-    type: 'upgrade',
-    name: '🏡 Bigger Barn',
-    desc: 'Upgrade the barn. All auto-produce 25% faster.',
-    cost: 200,
-    maxLevel: 3,
-    effect: () => { autoSpeedMult = Math.max(0.3, autoSpeedMult - 0.25); }
-  },
-  {
-    id: 'feed_upgrade',
-    type: 'upgrade',
-    name: '🌽 Premium Feed',
-    desc: 'Better feed — click yield doubled for all animals.',
-    cost: 150,
-    maxLevel: 1,
-    effect: () => { clickMult *= 2; }
-  },
-  {
-    id: 'auto_collect',
-    type: 'upgrade',
-    name: '🤖 Auto-Collector',
-    desc: 'Automatically collects produce every 2x faster.',
-    cost: 300,
-    maxLevel: 1,
-    effect: () => { autoSpeedMult = Math.max(0.1, autoSpeedMult - 0.4); }
-  },
-  {
-    id: 'market_stand',
-    type: 'upgrade',
-    name: '🛒 Market Stand',
-    desc: 'Sell prices +25% for all raw goods.',
-    cost: 400,
-    maxLevel: 1,
-    effect: () => { sellMult += 0.25; }
-  },
+const UPGRADES = [
+  { id:'premium_feed',  name:'🌽 Premium Feed',    desc:'Click yield ×2 for all animals.',          cost:200, maxLevel:1, effect:()=>{ clickMult*=2; } },
+  { id:'market_stand',  name:'🛒 Market Stand',    desc:'All raw sell prices +25%.',                cost:400, maxLevel:1, effect:()=>{ sellMult+=0.25; } },
+  { id:'auto_speed',    name:'⚙️ Better Machinery', desc:'Auto-produce 30% faster.',                cost:500, maxLevel:3, effect:()=>{ autoSpeedMult=Math.max(0.2,autoSpeedMult-0.30); restartAllTimers(); } },
+  { id:'bulk_craft',    name:'🍽️ Bulk Kitchen',    desc:'Craft recipes use 1 fewer ingredient (min 1).', cost:600, maxLevel:1, effect:()=>{ craftDiscount=1; } },
 ];
 
-// ── GLOBALS ──
+// ══════════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════════
+const state = {
+  money: 15,
+  day: 1,
+  inventory: {},
+  // animals[id] = count owned
+  animals: { chicken: 0 },
+  // housing[tierId] = true if purchased
+  housing: { chicken_coop_s: true },
+};
+
 let autoSpeedMult = 1;
-let clickMult = 1;
-let sellMult = 1;
-const animalTimers = {};
+let clickMult     = 1;
+let sellMult      = 1;
+let craftDiscount = 0;
+const animalTimers   = {};
 const animalProgress = {};
+const upgradeOwned   = {};
 
-// ══════════════════════════════════════════════
-//  HELPERS
-// ══════════════════════════════════════════════
-function fmt(n) { return '$' + n.toFixed(2); }
-function inv(item) { return state.inventory[item] || 0; }
-function addInv(item, qty) {
-  state.inventory[item] = (state.inventory[item] || 0) + qty;
+// ══════════════════════════════════════════════════════════
+//  HOUSING HELPERS
+// ══════════════════════════════════════════════════════════
+
+// Returns total capacity for an animal type based on owned tiers
+function getCapacity(animalId) {
+  const tiers = HOUSING[animalId].tiers;
+  let cap = 0;
+  tiers.forEach(t => { if (state.housing[t.id]) cap = t.capacity; });
+  return cap;
 }
+
+// Returns the next unowned tier for an animal, or null
+function getNextTier(animalId) {
+  return HOUSING[animalId].tiers.find(t => !state.housing[t.id]) || null;
+}
+
+// Is animal unlocked (has at least one tier of housing)?
+function isUnlocked(animalId) {
+  return HOUSING[animalId].tiers.some(t => state.housing[t.id]);
+}
+
+// Current animal count
 function animalCount(id) { return state.animals[id] || 0; }
-function animalCost(id) {
-  const a = ANIMALS[id];
-  const owned = animalCount(id);
-  return Math.floor(a.baseCost * Math.pow(a.costMult, owned));
-}
-function upgLevel(id) { return state.upgrades[id] || 0; }
+
+// ══════════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════════
+function fmt(n)         { return '$' + n.toFixed(2); }
+function inv(item)      { return state.inventory[item] || 0; }
+function addInv(item,q) { state.inventory[item] = (state.inventory[item]||0)+q; }
 
 function addLog(msg) {
   const log = document.getElementById('log');
   const d = document.createElement('div');
   d.textContent = '▸ ' + msg;
   log.insertBefore(d, log.firstChild);
-  while (log.children.length > 40) log.removeChild(log.lastChild);
+  while (log.children.length > 50) log.removeChild(log.lastChild);
 }
 
 function showNotif(msg) {
@@ -745,22 +616,22 @@ function showNotif(msg) {
   el.textContent = msg;
   el.classList.add('show');
   clearTimeout(el._t);
-  el._t = setTimeout(() => el.classList.remove('show'), 2200);
+  el._t = setTimeout(() => el.classList.remove('show'), 2400);
 }
 
-// ══════════════════════════════════════════════
-//  PRODUCE
-// ══════════════════════════════════════════════
-function produce(animalId, qty = null) {
-  const a = ANIMALS[animalId];
+// ══════════════════════════════════════════════════════════
+//  PRODUCTION
+// ══════════════════════════════════════════════════════════
+function produce(animalId, isClick=false) {
   const count = animalCount(animalId);
-  if (count === 0) return;
-  let total = 0;
-  let lastItem = '';
+  if (count === 0) return null;
+  const a = ANIMALS[animalId];
+  let total = 0, lastItem = '';
   a.produces.forEach(p => {
-    const amount = qty !== null ? qty : Math.ceil(
-      (p.min + Math.random() * (p.max - p.min)) * count * clickMult
-    );
+    const perAnimal = isClick
+      ? Math.ceil(clickMult)
+      : (p.min + Math.random() * (p.max - p.min));
+    const amount = Math.ceil(perAnimal * count);
     addInv(p.item, amount);
     total += amount;
     lastItem = p.item;
@@ -768,22 +639,21 @@ function produce(animalId, qty = null) {
   return { total, item: lastItem };
 }
 
-// ══════════════════════════════════════════════
-//  ANIMAL TIMERS
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+//  TIMERS
+// ══════════════════════════════════════════════════════════
 function startAnimalTimer(id) {
   if (animalTimers[id]) clearInterval(animalTimers[id]);
   animalProgress[id] = 0;
   const a = ANIMALS[id];
   const intervalMs = a.interval * 1000 * autoSpeedMult;
   const tickMs = 500;
-
   animalTimers[id] = setInterval(() => {
     if (animalCount(id) === 0) return;
-    animalProgress[id] = (animalProgress[id] || 0) + tickMs / intervalMs;
+    animalProgress[id] = (animalProgress[id]||0) + tickMs / intervalMs;
     if (animalProgress[id] >= 1) {
       animalProgress[id] = 0;
-      produce(id);
+      produce(id, false);
       renderInventory();
       renderSellBtn();
     }
@@ -799,290 +669,365 @@ function restartAllTimers() {
 
 function updateProgressBar(id) {
   const bar = document.getElementById(`prog-${id}`);
-  if (bar) bar.style.width = Math.min(100, (animalProgress[id] || 0) * 100) + '%';
+  if (bar) bar.style.width = Math.min(100,(animalProgress[id]||0)*100)+'%';
 }
 
-// ══════════════════════════════════════════════
-//  RENDER
-// ══════════════════════════════════════════════
-function renderMoney() {
-  document.getElementById('money-display').textContent = fmt(state.money);
-}
-
+// ══════════════════════════════════════════════════════════
+//  RENDER: LEFT PANEL — ANIMALS
+// ══════════════════════════════════════════════════════════
 function renderAnimals() {
   const list = document.getElementById('animals-list');
-  list.innerHTML = '';
+  let html = '';
+
   Object.entries(ANIMALS).forEach(([id, a]) => {
+    if (!isUnlocked(id)) return;
     const count = animalCount(id);
-    if (count === 0) return;
-    const card = document.createElement('div');
-    card.className = 'animal-card';
-    card.id = `acard-${id}`;
-    const produceNames = a.produces.map(p => ITEMS[p.item].emoji + ' ' + ITEMS[p.item].name).join(', ');
-    card.innerHTML = `
-      <div class="animal-header">
-        <span class="animal-emoji">${a.emoji}</span>
-        <span class="animal-name">${a.name}</span>
-        <span class="animal-count">${count}</span>
+    const cap   = getCapacity(id);
+    const full  = count >= cap;
+    const locked = count === 0;
+
+    const produceNames = a.produces.map(p => ITEMS[p.item].emoji+' '+ITEMS[p.item].name).join(', ');
+
+    // Build slots display (max 20 shown)
+    const displayCap = Math.min(cap, 20);
+    let slots = '';
+    for (let i = 0; i < displayCap; i++) {
+      const cls = i < count ? 'filled' : '';
+      slots += `<div class="slot ${cls}"></div>`;
+    }
+    if (cap > 20) slots += `<span style="font-size:0.65rem;color:var(--muted);align-self:center;">+${cap-20}</span>`;
+
+    html += `
+      <div class="animal-card ${locked ? 'locked' : ''}" id="acard-${id}" onclick="clickAnimal('${id}')">
+        <div class="animal-header">
+          <span class="animal-emoji">${a.emoji}</span>
+          <span class="animal-name">${a.name}</span>
+          <span style="font-family:'Courier Prime',monospace;font-weight:700;font-size:0.9rem;color:var(--bark);">${count}/${cap}</span>
+        </div>
+        <div class="housing-bar">
+          <span class="housing-label">Pens:</span>
+          <div class="slots-row">${slots}</div>
+        </div>
+        <div class="animal-stats">
+          Produces: <strong>${produceNames}</strong>
+        </div>
+        ${locked ? `<div class="locked-msg">No animals yet — buy some in the Market!</div>` : ''}
+        ${!locked ? `<div class="produce-progress"><div class="produce-fill" id="prog-${id}" style="width:0%"></div></div>` : ''}
       </div>
-      <div class="animal-stats">
-        Produces: <strong>${produceNames}</strong><br>
-        Click to collect!
-      </div>
-      <div class="produce-progress"><div class="produce-fill" id="prog-${id}" style="width:0%"></div></div>
     `;
-    card.addEventListener('click', () => clickAnimal(id, card));
-    list.appendChild(card);
   });
-  if (list.innerHTML === '') {
-    list.innerHTML = '<div style="font-size:0.8rem;color:var(--muted);font-style:italic;">Buy animals from the Market →</div>';
-  }
+
+  if (!html) html = '<div style="font-size:0.8rem;color:var(--muted);font-style:italic;">Build housing in the Market to get started!</div>';
+  list.innerHTML = html;
 }
 
-function clickAnimal(id, card) {
-  const result = produce(id);
+function clickAnimal(id) {
+  if (animalCount(id) === 0) return;
+  const card = document.getElementById(`acard-${id}`);
+  const result = produce(id, true);
   if (!result) return;
   card.classList.remove('clicking');
   void card.offsetWidth;
   card.classList.add('clicking');
 
-  // Float-up text
   const flash = document.createElement('div');
   flash.className = 'produce-flash';
-  flash.textContent = `+${result.total} ${ITEMS[result.item]?.emoji || ''}`;
+  flash.textContent = `+${result.total} ${ITEMS[result.item]?.emoji||''}`;
   card.appendChild(flash);
-  setTimeout(() => flash.remove(), 900);
+  setTimeout(()=>flash.remove(), 900);
 
   renderInventory();
   renderSellBtn();
 }
 
+// ══════════════════════════════════════════════════════════
+//  RENDER: INVENTORY
+// ══════════════════════════════════════════════════════════
 function renderInventory() {
   const grid = document.getElementById('inventory-grid');
-  const entries = Object.entries(state.inventory).filter(([, qty]) => qty > 0);
-  if (entries.length === 0) {
-    grid.innerHTML = '<div style="grid-column:span 2;font-size:0.8rem;color:var(--muted);font-style:italic;">Collect from your animals to fill inventory.</div>';
+  const entries = Object.entries(state.inventory).filter(([,qty])=>qty>0);
+  if (!entries.length) {
+    grid.innerHTML = '<div style="grid-column:span 2;font-size:0.8rem;color:var(--muted);font-style:italic;">Click your animals or wait for auto-produce.</div>';
     return;
   }
-  grid.innerHTML = entries.map(([item, qty]) => {
+  grid.innerHTML = entries.map(([item,qty])=>{
     const def = ITEMS[item];
     if (!def) return '';
-    return `
-      <div class="inv-item">
-        <span class="inv-icon">${def.emoji}</span>
-        <div class="inv-info">
-          <div class="inv-name">${def.name}</div>
-          <div class="inv-qty">${qty}</div>
-        </div>
+    return `<div class="inv-item">
+      <span class="inv-icon">${def.emoji}</span>
+      <div class="inv-info">
+        <div class="inv-name">${def.name}</div>
+        <div class="inv-qty">${qty}</div>
       </div>
-    `;
+    </div>`;
   }).join('');
 }
 
 function renderSellBtn() {
-  const btn = document.getElementById('sell-all-btn');
   const rawGoods = ['eggs','milk','wool','truffles','honey','goatmilk'];
-  const hasRaw = rawGoods.some(r => inv(r) > 0);
-  btn.disabled = !hasRaw;
+  document.getElementById('sell-all-btn').disabled = !rawGoods.some(r=>inv(r)>0);
 }
 
+// ══════════════════════════════════════════════════════════
+//  RENDER: CRAFT
+// ══════════════════════════════════════════════════════════
 function renderCraft() {
   const list = document.getElementById('craft-list');
   list.innerHTML = RECIPES.map(r => {
-    const reqText = Object.entries(r.ingredients).map(([item, qty]) => `${ITEMS[item]?.emoji} ${qty} ${ITEMS[item]?.name}`).join(' + ');
-    const canCraft = Object.entries(r.ingredients).every(([item, qty]) => inv(item) >= qty);
-    const sellP = ITEMS[r.result.item]?.sellPrice || 0;
+    const adjIngredients = {};
+    Object.entries(r.ingredients).forEach(([item,qty])=>{
+      adjIngredients[item] = Math.max(1, qty - craftDiscount);
+    });
+    const reqText = Object.entries(adjIngredients).map(([item,qty])=>`${ITEMS[item]?.emoji} ${qty} ${ITEMS[item]?.name}`).join(' + ');
+    const canCraft = Object.entries(adjIngredients).every(([item,qty])=>inv(item)>=qty);
+    const sellP = (ITEMS[r.result.item]?.sellPrice||0) * sellMult;
     return `
       <div class="craft-card">
         <div class="craft-card-header">
-          <span style="font-size:1.4rem">${r.emoji}</span>
+          <span style="font-size:1.3rem">${r.emoji}</span>
           <span class="craft-card-name">${r.name}</span>
-          <span class="craft-sell-price">${fmt(sellP * sellMult)}</span>
+          <span class="craft-sell-price">${fmt(sellP)}</span>
         </div>
-        <div class="craft-req">${reqText}</div>
+        <div class="craft-req">${reqText} → ${r.result.qty}x ${r.name}</div>
         <div style="display:flex;gap:6px;">
-          <button class="craft-btn" style="flex:1" ${canCraft ? '' : 'disabled'} onclick="craftItem('${r.id}')">Craft 1</button>
-          <button class="craft-btn" style="flex:1" ${canCraft ? '' : 'disabled'} onclick="craftItem('${r.id}', true)">Craft All</button>
+          <button class="craft-btn" style="flex:1" ${canCraft?'':'disabled'} onclick="craftItem('${r.id}',false)">Craft 1</button>
+          <button class="craft-btn" style="flex:1" ${canCraft?'':'disabled'} onclick="craftItem('${r.id}',true)">Craft All</button>
         </div>
       </div>
     `;
   }).join('');
 }
 
+// ══════════════════════════════════════════════════════════
+//  RENDER: SHOP (RIGHT PANEL)
+// ══════════════════════════════════════════════════════════
 function renderShop() {
   const list = document.getElementById('shop-list');
-  let html = '<div class="panel-title" style="margin-bottom:12px">Animals</div>';
+  let html = '';
+
+  // ── ANIMALS & HOUSING ──
+  html += '<div class="shop-section-title">🐾 Animals & Housing</div>';
 
   Object.entries(ANIMALS).forEach(([id, a]) => {
-    const cost = animalCost(id);
-    const owned = animalCount(id);
-    const canAfford = state.money >= cost;
-    html += `
-      <div class="shop-item">
-        <div class="shop-item-header">
-          <span style="font-size:1.3rem">${a.emoji}</span>
-          <span class="shop-item-name">${a.name} ${owned > 0 ? `(${owned})` : ''}</span>
-          <span class="shop-item-cost">${fmt(cost)}</span>
+    const housing = HOUSING[id];
+    const count   = animalCount(id);
+    const cap     = getCapacity(id);
+    const unlocked = isUnlocked(id);
+    const nextTier = getNextTier(id);
+    const animalCost = housing.animalCost;
+    const canBuyAnimal = unlocked && count < cap && state.money >= animalCost;
+    const atCap = unlocked && count >= cap;
+
+    html += `<div class="housing-section">`;
+    html += `<div class="housing-section-header">
+      <span class="hs-emoji">${a.emoji}</span>
+      <span class="hs-name">${a.name}</span>
+      <span class="hs-animal-cost">${fmt(animalCost)} ea.</span>
+    </div>`;
+
+    // Buy animal row
+    if (unlocked) {
+      html += `<div class="animal-buy-row">
+        <span class="occupancy">${count} / ${cap} <strong>${atCap ? '— FULL' : 'housed'}</strong></span>
+        <button class="buy-animal-btn" ${canBuyAnimal?'':'disabled'} onclick="buyAnimal('${id}')">
+          ${atCap ? 'Need Housing' : `Buy ${a.emoji}`}
+        </button>
+      </div>`;
+    }
+
+    // Housing tiers
+    housing.tiers.forEach(t => {
+      const owned = !!state.housing[t.id];
+      const isNext = !owned && (housing.tiers.findIndex(x=>!state.housing[x.id]) === housing.tiers.indexOf(t));
+      const canAfford = state.money >= t.cost && isNext;
+
+      html += `<div class="housing-tier-row">
+        <div class="tier-label">
+          <span class="tier-icon">${t.icon}</span>
+          <span class="tier-name">${t.name}</span>
+          <span class="tier-cap">cap: ${t.capacity}</span>
+          ${owned
+            ? `<span class="tier-owned-badge">✓ Owned</span>`
+            : `<span class="tier-cost">${t.cost===0?'FREE':fmt(t.cost)}</span>`}
         </div>
-        <div class="shop-item-desc">${a.desc}</div>
-        <button class="buy-btn" ${canAfford ? '' : 'disabled'} onclick="buyAnimal('${id}')">Buy</button>
-      </div>
-    `;
+        ${!owned && isNext ? `<button class="buy-housing-btn" ${canAfford||t.cost===0?'':'disabled'} onclick="buyHousing('${id}','${t.id}')">${t.cost===0?'Build Free':'Build '+fmt(t.cost)}</button>` : ''}
+      </div>`;
+    });
+
+    html += `</div>`;
   });
 
-  html += '<hr class="section-divider"><div class="panel-title" style="margin-bottom:12px">Upgrades</div>';
-
-  SHOP.filter(s => s.type === 'upgrade').forEach(u => {
-    const level = upgLevel(u.id);
-    const maxed = level >= (u.maxLevel || 1);
-    const canAfford = state.money >= u.cost && !maxed;
-    html += `
-      <div class="shop-item ${maxed ? 'upgrade-owned' : ''}">
-        <div class="shop-item-header">
-          <span class="shop-item-name">${u.name}</span>
-          <span class="shop-item-cost">${maxed ? '✓' : fmt(u.cost)}</span>
-        </div>
-        <div class="shop-item-desc">${u.desc}</div>
-        <button class="buy-btn" ${canAfford ? '' : 'disabled'} onclick="buyUpgrade('${u.id}')">${maxed ? 'Owned' : 'Purchase'}</button>
+  // ── UPGRADES ──
+  html += '<div class="shop-section-title">⬆️ Farm Upgrades</div>';
+  UPGRADES.forEach(u => {
+    const level  = upgradeOwned[u.id] || 0;
+    const maxed  = level >= u.maxLevel;
+    const canAfford = !maxed && state.money >= u.cost;
+    html += `<div class="upg-card ${maxed?'owned':''}">
+      <div class="upg-header">
+        <span class="upg-name">${u.name}${u.maxLevel>1?` (${level}/${u.maxLevel})`:''}</span>
+        <span class="upg-cost">${maxed?'✓':fmt(u.cost)}</span>
       </div>
-    `;
+      <div class="upg-desc">${u.desc}</div>
+      <button class="buy-upg-btn" ${canAfford?'':'disabled'} onclick="buyUpgrade('${u.id}')">${maxed?'Maxed':'Purchase'}</button>
+    </div>`;
   });
 
   list.innerHTML = html;
 }
 
+// ══════════════════════════════════════════════════════════
+//  RENDER: FARM SCENE
+// ══════════════════════════════════════════════════════════
 function renderFarmScene() {
+  // Animals wandering
   const display = document.getElementById('farm-display');
-  const allIcons = [];
-  Object.entries(state.animals).forEach(([id, count]) => {
-    const a = ANIMALS[id];
-    const show = Math.min(count, 5);
-    for (let i = 0; i < show; i++) allIcons.push(a.emoji);
+  const icons = [];
+  Object.entries(state.animals).forEach(([id,count])=>{
+    if (!count) return;
+    const show = Math.min(count, 6);
+    for (let i=0;i<show;i++) icons.push(ANIMALS[id].emoji);
   });
-  display.innerHTML = allIcons.map(e => `<span class="farm-animal-icon">${e}</span>`).join('');
+  display.innerHTML = icons.map(e=>`<span class="farm-animal-icon">${e}</span>`).join('');
 
-  // Barn upgrade
-  const barnLevel = upgLevel('better_barn');
-  const barnIcons = ['🏚️', '🏠', '🏡', '🏰'];
-  document.getElementById('barn-icon').textContent = barnIcons[Math.min(barnLevel, 3)];
+  // Buildings
+  const bld = document.getElementById('farm-buildings');
+  const shown = {};
+  Object.entries(state.housing).forEach(([tid])=>{
+    // Find which animal and tier this is
+    for (const [aid, h] of Object.entries(HOUSING)) {
+      const tier = h.tiers.find(t=>t.id===tid);
+      if (tier) {
+        // Only show highest owned tier per animal
+        if (!shown[aid] || tier.capacity > shown[aid].cap) {
+          shown[aid] = { icon: tier.icon, cap: tier.capacity, name: tier.name };
+        }
+      }
+    }
+  });
+  bld.innerHTML = Object.entries(shown).map(([aid, info])=>`
+    <div class="farm-building">
+      <span class="bicon">${info.icon}</span>
+      ${ANIMALS[aid].emoji}
+    </div>
+  `).join('');
 }
 
+// ══════════════════════════════════════════════════════════
+//  ACTIONS
+// ══════════════════════════════════════════════════════════
+function buyAnimal(id) {
+  const cost = HOUSING[id].animalCost;
+  const count = animalCount(id);
+  const cap   = getCapacity(id);
+  if (!isUnlocked(id) || count >= cap || state.money < cost) return;
+  state.money -= cost;
+  state.animals[id] = count + 1;
+  addLog(`Bought a ${ANIMALS[id].name} for ${fmt(cost)} (${count+1}/${cap})`);
+  showNotif(`${ANIMALS[id].emoji} New ${ANIMALS[id].name} on the farm!`);
+  if (count === 0) startAnimalTimer(id);
+  renderAll();
+}
+
+function buyHousing(animalId, tierId) {
+  const tier = HOUSING[animalId].tiers.find(t=>t.id===tierId);
+  if (!tier || state.housing[tierId]) return;
+  if (tier.cost > 0 && state.money < tier.cost) return;
+  state.money -= tier.cost;
+  state.housing[tierId] = true;
+  addLog(`Built ${tier.name} for ${ANIMALS[animalId].name}s (cap: ${tier.capacity})`);
+  showNotif(`${tier.icon} ${tier.name} built!`);
+  renderAll();
+}
+
+function buyUpgrade(id) {
+  const upg = UPGRADES.find(u=>u.id===id);
+  if (!upg) return;
+  const level = upgradeOwned[id]||0;
+  if (level >= upg.maxLevel || state.money < upg.cost) return;
+  state.money -= upg.cost;
+  upgradeOwned[id] = level + 1;
+  upg.effect();
+  addLog(`Purchased: ${upg.name}`);
+  showNotif(`⬆️ ${upg.name} upgraded!`);
+  renderAll();
+}
+
+function sellAll() {
+  const rawGoods = ['eggs','milk','wool','truffles','honey','goatmilk'];
+  let total = 0; let sold = [];
+  rawGoods.forEach(item=>{
+    const qty = inv(item);
+    if (qty>0){
+      total += qty * ITEMS[item].sellPrice * sellMult;
+      sold.push(`${qty}× ${ITEMS[item].emoji}`);
+      state.inventory[item] = 0;
+    }
+  });
+  if (!total) return;
+  state.money += total;
+  addLog(`Sold ${sold.join(', ')} for ${fmt(total)}`);
+  showNotif(`💰 Sold for ${fmt(total)}!`);
+  renderAll();
+}
+
+function craftItem(recipeId, all=false) {
+  const recipe = RECIPES.find(r=>r.id===recipeId);
+  if (!recipe) return;
+  const adjIngredients = {};
+  Object.entries(recipe.ingredients).forEach(([item,qty])=>{ adjIngredients[item]=Math.max(1,qty-craftDiscount); });
+  let count = 0;
+  do {
+    if (!Object.entries(adjIngredients).every(([item,qty])=>inv(item)>=qty)) break;
+    Object.entries(adjIngredients).forEach(([item,qty])=>{ state.inventory[item]-=qty; });
+    addInv(recipe.result.item, recipe.result.qty);
+    count++;
+  } while (all);
+  if (!count) return;
+  // Auto sell
+  const item = recipe.result.item;
+  const qty  = state.inventory[item]||0;
+  const earned = qty * (ITEMS[item]?.sellPrice||0) * sellMult;
+  state.inventory[item] = 0;
+  state.money += earned;
+  addLog(`Crafted & sold ${count}× ${recipe.emoji} ${recipe.name} for ${fmt(earned)}`);
+  showNotif(`🍳 ${count}× ${recipe.name} → ${fmt(earned)}!`);
+  renderAll();
+}
+
+// ══════════════════════════════════════════════════════════
+//  TABS
+// ══════════════════════════════════════════════════════════
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(`tab-${name}`).classList.add('active');
+  btn.classList.add('active');
+  if (name==='craft') renderCraft();
+}
+
+// ══════════════════════════════════════════════════════════
+//  RENDER ALL
+// ══════════════════════════════════════════════════════════
 function renderAll() {
-  renderMoney();
+  document.getElementById('money-display').textContent = fmt(state.money);
+  document.getElementById('day-display').textContent   = `Day ${state.day}`;
   renderAnimals();
   renderInventory();
   renderSellBtn();
   renderCraft();
   renderShop();
   renderFarmScene();
-  document.getElementById('day-display').textContent = `Day ${state.day}`;
 }
 
-// ══════════════════════════════════════════════
-//  ACTIONS
-// ══════════════════════════════════════════════
-function buyAnimal(id) {
-  const cost = animalCost(id);
-  if (state.money < cost) return;
-  state.money -= cost;
-  state.animals[id] = (state.animals[id] || 0) + 1;
-  const a = ANIMALS[id];
-  addLog(`Bought a ${a.name} for ${fmt(cost)}`);
-  showNotif(`🐾 New ${a.name} added to the farm!`);
-  if (animalCount(id) === 1) startAnimalTimer(id);
-  renderAll();
-}
+// ══════════════════════════════════════════════════════════
+//  DAY CYCLE + INIT
+// ══════════════════════════════════════════════════════════
+setInterval(()=>{ state.day++; document.getElementById('day-display').textContent=`Day ${state.day}`; }, 60000);
 
-function buyUpgrade(id) {
-  const upg = SHOP.find(s => s.id === id);
-  if (!upg || state.money < upg.cost) return;
-  const level = upgLevel(id);
-  if (level >= (upg.maxLevel || 1)) return;
-  state.money -= upg.cost;
-  state.upgrades[id] = level + 1;
-  upg.effect();
-  addLog(`Purchased upgrade: ${upg.name}`);
-  showNotif(`⬆️ ${upg.name} purchased!`);
-  restartAllTimers();
-  renderAll();
-}
-
-function sellAll() {
-  const rawGoods = ['eggs','milk','wool','truffles','honey','goatmilk'];
-  let total = 0;
-  let sold = [];
-  rawGoods.forEach(item => {
-    const qty = inv(item);
-    if (qty > 0) {
-      const earned = qty * ITEMS[item].sellPrice * sellMult;
-      total += earned;
-      sold.push(`${qty}x ${ITEMS[item].emoji}`);
-      state.inventory[item] = 0;
-    }
-  });
-  if (total === 0) return;
-  state.money += total;
-  state.totalEarned += total;
-  addLog(`Sold ${sold.join(', ')} for ${fmt(total)}`);
-  showNotif(`💰 Sold for ${fmt(total)}!`);
-  renderAll();
-}
-
-function craftItem(recipeId, all = false) {
-  const recipe = RECIPES.find(r => r.id === recipeId);
-  if (!recipe) return;
-  let count = 0;
-  do {
-    const canCraft = Object.entries(recipe.ingredients).every(([item, qty]) => inv(item) >= qty);
-    if (!canCraft) break;
-    Object.entries(recipe.ingredients).forEach(([item, qty]) => {
-      state.inventory[item] = (state.inventory[item] || 0) - qty;
-    });
-    addInv(recipe.result.item, recipe.result.qty);
-    count++;
-  } while (all);
-
-  if (count === 0) return;
-
-  // Auto-sell crafted items
-  const item = recipe.result.item;
-  const qty = state.inventory[item] || 0;
-  const earned = qty * (ITEMS[item]?.sellPrice || 0) * sellMult;
-  state.inventory[item] = 0;
-  state.money += earned;
-  state.totalEarned += earned;
-  addLog(`Crafted & sold ${count}x ${recipe.emoji} ${recipe.name} for ${fmt(earned)}`);
-  showNotif(`🍳 Crafted ${count}x ${recipe.name} → ${fmt(earned)}!`);
-  renderAll();
-}
-
-// ══════════════════════════════════════════════
-//  TABS
-// ══════════════════════════════════════════════
-function switchTab(name) {
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(`tab-${name}`).classList.add('active');
-  event.target.classList.add('active');
-  if (name === 'craft') renderCraft();
-}
-
-// ══════════════════════════════════════════════
-//  DAY CYCLE
-// ══════════════════════════════════════════════
-setInterval(() => {
-  state.day++;
-  document.getElementById('day-display').textContent = `Day ${state.day}`;
-}, 60000);
-
-// ══════════════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════════════
-// Start with 1 free chicken
-state.animals.chicken = 1;
-startAnimalTimer('chicken');
-addLog('Welcome to the farm! Your first chicken is free.');
-showNotif('🐔 Your farm is open for business!');
+// Init — free small coop already owned, no chickens yet
+addLog('Welcome! Build a coop to get started, or buy your first chicken.');
+showNotif('🌾 Welcome to Barnyard! You have a small coop ready.');
 renderAll();
 </script>
 </body>
