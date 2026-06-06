@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Barnyard</title>
+<title>Barnyard Tycoon</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Courier+Prime:wght@400;700&display=swap');
 
@@ -23,6 +23,7 @@
     --muted: #8a7060;
     --panel: rgba(245,234,208,0.92);
     --shadow: rgba(44,26,14,0.3);
+    --ribbon-blue: #1d4ed8;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -51,6 +52,13 @@
   }
   header h1 { font-size: 1.8rem; color: var(--cream); letter-spacing: 0.05em; text-shadow: 2px 2px 0 var(--soil); }
   header h1 span { color: var(--hay-light); }
+  
+  .header-stats {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
   #money-display {
     font-family: 'Courier Prime', monospace;
     font-size: 1.4rem; font-weight: 700;
@@ -59,13 +67,24 @@
     padding: 6px 16px; border-radius: 4px;
     border: 2px solid var(--hay);
     text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
-    min-width: 130px; text-align: right;
+    min-width: 140px; text-align: right;
   }
-  #day-display { color: var(--parchment); font-size: 0.9rem; font-style: italic; opacity: 0.85; }
+  #ribbon-display {
+    font-family: 'Courier Prime', monospace;
+    font-size: 1.1rem; font-weight: 700;
+    color: #fff;
+    background: var(--ribbon-blue);
+    padding: 6px 14px; border-radius: 4px;
+    border: 2px solid #60a5fa;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+    display: none;
+  }
+  #day-display { color: var(--parchment); font-size: 0.9rem; font-style: italic; opacity: 0.85; text-align: right; }
+  #weather-display { color: var(--hay-light); font-size: 0.85rem; font-weight: 600; text-align: right; }
 
   .game-wrap {
     display: grid;
-    grid-template-columns: 290px 1fr 280px;
+    grid-template-columns: 310px 1fr 310px;
     min-height: calc(100vh - 60px);
   }
 
@@ -128,14 +147,13 @@
     flex: 1;
   }
   .slot {
-    width: 14px; height: 14px;
+    width: 12px; height: 12px;
     border-radius: 2px;
     border: 1.5px solid var(--bark);
     background: var(--parchment);
     transition: background 0.2s;
   }
   .slot.filled { background: var(--bark); }
-  .slot.capacity { background: var(--hay-light); border-color: var(--hay); }
 
   .animal-stats { font-size: 0.76rem; color: var(--muted); font-style: italic; }
   .animal-stats strong { color: var(--bark); font-style: normal; }
@@ -167,11 +185,12 @@
     border: 3px solid var(--soil);
     border-radius: 8px;
     padding: 20px;
-    min-height: 220px;
+    min-height: 240px;
     position: relative;
     overflow: hidden;
     box-shadow: 0 4px 20px var(--shadow);
     margin-bottom: 16px;
+    transition: background 1s ease;
   }
   .sun {
     position: absolute; top: 12px; right: 20px;
@@ -182,6 +201,20 @@
     animation: sunPulse 3s ease-in-out infinite;
   }
   @keyframes sunPulse { 0%,100%{box-shadow:0 0 20px rgba(255,220,0,0.6)} 50%{box-shadow:0 0 35px rgba(255,220,0,0.9)} }
+
+  /* GOLDEN EVENT OBJECT */
+  #golden-egg {
+    position: absolute;
+    font-size: 2.2rem;
+    cursor: pointer;
+    z-index: 50;
+    user-select: none;
+    animation: goldenGlow 1s ease-in-out infinite alternate, floatUp 4s linear forwards;
+  }
+  @keyframes goldenGlow {
+    0% { filter: drop-shadow(0 0 2px #fff) drop-shadow(0 0 5px #d4a017); transform: scale(1); }
+    100% { filter: drop-shadow(0 0 8px #fff) drop-shadow(0 0 15px #ffe87a); transform: scale(1.15) rotate(10deg); }
+  }
 
   .farm-buildings {
     position: absolute; bottom: 16px; right: 16px;
@@ -216,14 +249,14 @@
   /* TABS */
   .tabs { display: flex; gap: 4px; margin-bottom: 14px; }
   .tab-btn {
-    flex: 1; padding: 8px 6px;
+    flex: 1; padding: 8px 4px;
     background: var(--parchment);
     border: 2px solid var(--hay);
     border-radius: 4px 4px 0 0;
     font-family: 'Lora', serif;
     font-size: 0.78rem; font-weight: 700;
     cursor: pointer; color: var(--muted);
-    transition: all 0.15s; letter-spacing: 0.04em;
+    transition: all 0.15s; letter-spacing: 0.02em;
   }
   .tab-btn:hover { background: var(--cream); color: var(--ink); }
   .tab-btn.active { background: var(--cream); color: var(--bark); border-color: var(--bark); border-bottom-color: var(--cream); }
@@ -243,7 +276,7 @@
   .inv-name { font-size: 0.72rem; font-weight: 700; color: var(--bark); }
   .inv-qty { font-family: 'Courier Prime', monospace; font-size: 1rem; font-weight: 700; }
 
-  .sell-btn, .craft-btn {
+  .sell-btn, .craft-btn, .prestige-btn {
     width: 100%; padding: 8px;
     border: none; border-radius: 4px;
     font-family: 'Lora', serif; font-weight: 700;
@@ -257,6 +290,10 @@
   .craft-btn:hover { background: var(--hay-light); }
   .craft-btn:disabled { opacity: 0.4; cursor: default; }
 
+  .prestige-btn { background: var(--ribbon-blue); color: #fff; border: 2px solid #1e3a8a; margin-top: 15px;}
+  .prestige-btn:hover { background: #2563eb; }
+  .prestige-btn:disabled { opacity: 0.4; cursor: default; }
+
   /* CRAFT */
   .craft-card {
     background: var(--cream); border: 2px solid var(--hay);
@@ -266,6 +303,26 @@
   .craft-card-name { font-weight: 700; font-size: 0.92rem; flex: 1; }
   .craft-sell-price { font-family: 'Courier Prime', monospace; font-size: 0.88rem; color: var(--gold); font-weight: 700; }
   .craft-req { font-size: 0.74rem; color: var(--muted); margin-bottom: 6px; }
+
+  /* QUANTITY TOGGLE & RATIO DISPLAY */
+  .qty-toggle-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--parchment);
+    padding: 6px 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    border: 1px solid var(--hay);
+  }
+  .qty-label { font-size: 0.75rem; font-weight: 700; color: var(--bark); }
+  .qty-btns { display: flex; gap: 4px; }
+  .qty-btn {
+    padding: 3px 8px; font-family: 'Courier Prime', monospace; font-size: 0.75rem;
+    font-weight: 700; background: var(--cream); border: 1px solid var(--hay);
+    cursor: pointer; border-radius: 3px;
+  }
+  .qty-btn.active { background: var(--bark); color: var(--cream); border-color: var(--soil); }
 
   /* SHOP — RIGHT PANEL */
   .shop-section-title {
@@ -277,7 +334,6 @@
   }
   .shop-section-title:first-child { margin-top: 0; }
 
-  /* Housing tiers within each animal section */
   .housing-section {
     background: var(--cream);
     border: 2px solid var(--hay);
@@ -324,28 +380,22 @@
   .buy-housing-btn:hover { background: #a02828; }
   .buy-housing-btn:disabled { opacity: 0.4; cursor: default; }
 
-  .housing-tier-row {
-    margin-bottom: 5px;
-  }
+  .housing-tier-row { margin-bottom: 5px; }
   .tier-label {
     display: flex; align-items: center; gap: 6px;
     font-size: 0.78rem; color: var(--ink); margin-bottom: 4px;
   }
   .tier-label .tier-icon { font-size: 1rem; }
   .tier-label .tier-name { flex: 1; font-weight: 600; }
-  .tier-label .tier-cap {
-    font-family: 'Courier Prime', monospace;
-    font-size: 0.8rem; color: var(--muted);
-  }
+  .tier-label .tier-cap { font-family: 'Courier Prime', monospace; font-size: 0.8rem; color: var(--muted); }
   .tier-label .tier-cost { font-family: 'Courier Prime', monospace; font-weight: 700; color: var(--gold); font-size: 0.82rem; }
-  .tier-owned { color: var(--grass); font-weight: 700; font-size: 0.8rem; }
   .tier-owned-badge {
     background: var(--grass); color: var(--cream);
     border-radius: 3px; padding: 1px 6px;
     font-size: 0.7rem; font-weight: 700;
   }
 
-  /* upgrades */
+  /* Upgrades & Automation Cards */
   .upg-card {
     background: var(--cream); border: 2px solid var(--hay);
     border-radius: 6px; padding: 10px 12px; margin-bottom: 10px;
@@ -365,7 +415,7 @@
   .buy-upg-btn:hover { background: #7a4520; }
   .buy-upg-btn:disabled { opacity: 0.4; cursor: default; }
 
-  /* log */
+  /* Log */
   #log { font-size: 0.76rem; color: var(--muted); font-style: italic; max-height: 200px; overflow-y: auto; }
   #log div { margin-bottom: 3px; padding: 2px 0; border-bottom: 1px solid rgba(200,180,150,0.3); }
   #log div:first-child { color: var(--bark); font-style: normal; font-weight: 600; }
@@ -383,7 +433,6 @@
   #notif.show { opacity: 1; }
 
   hr.div { border: none; border-top: 1px dashed var(--hay); margin: 10px 0; }
-
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: var(--parchment); }
   ::-webkit-scrollbar-thumb { background: var(--hay); border-radius: 3px; }
@@ -394,9 +443,15 @@
 <header>
   <div>
     <h1>🌾 <span>Barnyard</span></h1>
-    <div id="day-display">Day 1</div>
+    <div style="display:flex; gap: 12px; margin-top:2px;">
+      <div id="day-display">Day 1</div>
+      <div id="weather-display">☀️ Sunny</div>
+    </div>
   </div>
-  <div id="money-display">$0.00</div>
+  <div class="header-stats">
+    <div id="ribbon-display">🏅 0 Ribbons</div>
+    <div id="money-display">$15.00</div>
+  </div>
 </header>
 
 <div class="game-wrap">
@@ -409,15 +464,27 @@
 
   <!-- CENTER -->
   <div class="farm-center">
-    <div class="farm-scene">
-      <div class="sun"></div>
+    <div class="farm-scene" id="farm-scene-bg">
+      <div class="sun" id="farm-sun"></div>
       <div class="farm-buildings" id="farm-buildings"></div>
       <div class="farm-animals-display" id="farm-display"></div>
     </div>
 
+    <!-- BUY QUANTITY TOGGLE -->
+    <div class="qty-toggle-container">
+      <span class="qty-label">Purchase Multiplier:</span>
+      <div class="qty-btns">
+        <button class="qty-btn active" onclick="setBuyQty(1, this)">x1</button>
+        <button class="qty-btn" onclick="setBuyQty(10, this)">x10</button>
+        <button class="qty-btn" onclick="setBuyQty('MAX', this)">MAX</button>
+      </div>
+    </div>
+
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('inventory',this)">📦 Inventory</button>
-      <button class="tab-btn" onclick="switchTab('craft',this)">🍳 Craft</button>
+      <button class="tab-btn" onclick="switchTab('craft',this)">🍳 Craft Tree</button>
+      <button class="tab-btn" onclick="switchTab('automation',this)">⚙️ Staff</button>
+      <button class="tab-btn" onclick="switchTab('fair',this)">🏅 Fair (Prestige)</button>
       <button class="tab-btn" onclick="switchTab('log',this)">📜 Log</button>
     </div>
 
@@ -428,6 +495,24 @@
 
     <div class="tab-content" id="tab-craft">
       <div id="craft-list"></div>
+    </div>
+
+    <div class="tab-content" id="tab-automation">
+      <div id="automation-list"></div>
+    </div>
+
+    <div class="tab-content" id="tab-fair">
+      <div class="upg-card" style="text-align: center; padding: 20px;">
+        <h3 style="color: var(--ribbon-blue); margin-bottom: 8px;">🎪 Enter the County Fair</h3>
+        <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 12px; font-style: italic;">
+          Pack up your current assets and head to the Fair! Resets your farm, cash, and upgrades, but yields Blue Ribbons based on total performance.
+        </p>
+        <div style="background: var(--parchment); padding: 10px; border-radius: 4px; font-family:'Courier Prime', monospace; font-size:0.9rem; margin-bottom: 12px;">
+          Current Claimable Ribbons: <strong id="fair-claim-count" style="color:var(--ribbon-blue)">0</strong><br>
+          <span style="font-size: 0.72rem; color: var(--muted);">(Each ribbon provides a permanent +15% profit boost)</span>
+        </div>
+        <button class="prestige-btn" id="prestige-btn" onclick="claimPrestige()">Pack Up & Claim Ribbons</button>
+      </div>
     </div>
 
     <div class="tab-content" id="tab-log">
@@ -449,61 +534,59 @@
 //  DATA DEFINITIONS
 // ══════════════════════════════════════════════════════════
 
-// Housing tiers per animal type
-// Each tier: { id, name, icon, capacity (cumulative slots added), cost }
 const HOUSING = {
   chicken: {
     animalCost: 5,
     tiers: [
-      { id: 'chicken_coop_s',  name: 'Small Coop',    icon: '🏠', capacity: 3,  cost: 0   }, // free starter
-      { id: 'chicken_coop_m',  name: 'Medium Coop',   icon: '🏡', capacity: 6,  cost: 80  },
-      { id: 'chicken_coop_l',  name: 'Large Coop',    icon: '🏰', capacity: 12, cost: 250 },
-      { id: 'chicken_coop_xl', name: 'Mega Coop',     icon: '🏯', capacity: 20, cost: 700 },
+      { id: 'chicken_coop_s',  name: 'Small Coop',    icon: '🏠', capacity: 3,  cost: 0   },
+      { id: 'chicken_coop_m',  name: 'Medium Coop',   icon: '🏡', capacity: 10, cost: 80  },
+      { id: 'chicken_coop_l',  name: 'Large Coop',    icon: '🏰', capacity: 25, cost: 250 },
+      { id: 'chicken_coop_xl', name: 'Mega Coop',     icon: '🏯', capacity: 60, cost: 700 },
     ]
   },
   cow: {
     animalCost: 40,
     tiers: [
       { id: 'cow_pen_s',  name: 'Small Pasture', icon: '⛺', capacity: 2,  cost: 120  },
-      { id: 'cow_pen_m',  name: 'Dairy Barn',    icon: '🏠', capacity: 5,  cost: 350  },
-      { id: 'cow_pen_l',  name: 'Large Dairy',   icon: '🏡', capacity: 10, cost: 900  },
-      { id: 'cow_pen_xl', name: 'Grand Dairy',   icon: '🏰', capacity: 18, cost: 2500 },
+      { id: 'cow_pen_m',  name: 'Dairy Barn',    icon: '🏠', capacity: 6,  cost: 350  },
+      { id: 'cow_pen_l',  name: 'Large Dairy',   icon: '🏡', capacity: 15, cost: 900  },
+      { id: 'cow_pen_xl', name: 'Grand Dairy',   icon: '🏰', capacity: 40, cost: 2500 },
     ]
   },
   sheep: {
     animalCost: 35,
     tiers: [
       { id: 'sheep_pen_s',  name: 'Sheep Pen',     icon: '⛺', capacity: 2,  cost: 100  },
-      { id: 'sheep_pen_m',  name: 'Wool Shed',     icon: '🏠', capacity: 5,  cost: 300  },
-      { id: 'sheep_pen_l',  name: 'Shearing Barn', icon: '🏡', capacity: 10, cost: 850  },
-      { id: 'sheep_pen_xl', name: 'Wool Ranch',    icon: '🏰', capacity: 18, cost: 2200 },
+      { id: 'sheep_pen_m',  name: 'Wool Shed',     icon: '🏠', capacity: 6,  cost: 300  },
+      { id: 'sheep_pen_l',  name: 'Shearing Barn', icon: '🏡', capacity: 15, cost: 850  },
+      { id: 'sheep_pen_xl', name: 'Wool Ranch',    icon: '🏰', capacity: 40, cost: 2200 },
     ]
   },
   bee: {
     animalCost: 30,
     tiers: [
       { id: 'bee_yard_s',  name: 'Starter Apiary', icon: '🪵', capacity: 3,  cost: 90   },
-      { id: 'bee_yard_m',  name: 'Bee Garden',     icon: '🌳', capacity: 8,  cost: 280  },
-      { id: 'bee_yard_l',  name: 'Honey Grove',    icon: '🌲', capacity: 15, cost: 750  },
-      { id: 'bee_yard_xl', name: 'Royal Apiary',   icon: '🏡', capacity: 25, cost: 1800 },
+      { id: 'bee_yard_m',  name: 'Bee Garden',     icon: '🌳', capacity: 10, cost: 280  },
+      { id: 'bee_yard_l',  name: 'Honey Grove',    icon: '🌲', capacity: 25, cost: 750  },
+      { id: 'bee_yard_xl', name: 'Royal Apiary',   icon: '🏡', capacity: 65, cost: 1800 },
     ]
   },
   pig: {
     animalCost: 60,
     tiers: [
       { id: 'pig_sty_s',  name: 'Pig Sty',       icon: '⛺', capacity: 2,  cost: 180  },
-      { id: 'pig_sty_m',  name: 'Muddy Pen',      icon: '🏠', capacity: 5,  cost: 500  },
-      { id: 'pig_sty_l',  name: 'Truffle Farm',   icon: '🏡', capacity: 10, cost: 1400 },
-      { id: 'pig_sty_xl', name: 'Grand Piggery',  icon: '🏰', capacity: 16, cost: 3500 },
+      { id: 'pig_sty_m',  name: 'Muddy Pen',      icon: '🏠', capacity: 6,  cost: 500  },
+      { id: 'pig_sty_l',  name: 'Truffle Farm',   icon: '🏡', capacity: 15, cost: 1400 },
+      { id: 'pig_sty_xl', name: 'Grand Piggery',  icon: '🏰', capacity: 35, cost: 3500 },
     ]
   },
   goat: {
     animalCost: 50,
     tiers: [
       { id: 'goat_pen_s',  name: 'Goat Pen',      icon: '⛺', capacity: 2,  cost: 150  },
-      { id: 'goat_pen_m',  name: 'Goat Yard',     icon: '🏠', capacity: 5,  cost: 420  },
-      { id: 'goat_pen_l',  name: 'Goat Barn',     icon: '🏡', capacity: 10, cost: 1100 },
-      { id: 'goat_pen_xl', name: 'Goat Ranch',    icon: '🏰', capacity: 18, cost: 2800 },
+      { id: 'goat_pen_m',  name: 'Goat Yard',     icon: '🏠', capacity: 6,  cost: 420  },
+      { id: 'goat_pen_l',  name: 'Goat Barn',     icon: '🏡', capacity: 15, cost: 1100 },
+      { id: 'goat_pen_xl', name: 'Goat Ranch',    icon: '🏰', capacity: 40, cost: 2800 },
     ]
   },
 };
@@ -524,6 +607,8 @@ const ITEMS = {
   truffles:   { name: 'Truffles',      emoji: '🍄', sellPrice: 20 },
   honey:      { name: 'Honey',         emoji: '🍯', sellPrice: 8  },
   goatmilk:   { name: 'Goat Milk',     emoji: '🫙', sellPrice: 6  },
+  
+  // T2 Processed Items
   omelette:   { name: 'Omelette',      emoji: '🍳', sellPrice: 12 },
   cheese:     { name: 'Cheese',        emoji: '🧀', sellPrice: 18 },
   sweater:    { name: 'Sweater',       emoji: '🧥', sellPrice: 40 },
@@ -531,6 +616,9 @@ const ITEMS = {
   truffle_omelette: { name: 'Truffle Omelette', emoji: '🍽️', sellPrice: 80 },
   goat_cheese:{ name: 'Goat Cheese',   emoji: '🫕', sellPrice: 35 },
   mead:       { name: 'Mead',          emoji: '🍺', sellPrice: 60 },
+
+  // T3 Elite Item
+  charcuterie:{ name: 'Royal Charcuterie Board', emoji: '🪵', sellPrice: 240 }
 };
 
 const RECIPES = [
@@ -541,6 +629,9 @@ const RECIPES = [
   { id:'truffle_omelette',  name:'Truffle Omelette',  emoji:'🍽️', ingredients:{eggs:5,truffles:1}, result:{item:'truffle_omelette',qty:1},  desc:'5 eggs + 1 truffle' },
   { id:'goat_cheese',       name:'Goat Cheese',       emoji:'🫕', ingredients:{goatmilk:4},         result:{item:'goat_cheese',qty:1},       desc:'4 goat milk' },
   { id:'mead',              name:'Mead',              emoji:'🍺', ingredients:{honey:6},            result:{item:'mead',qty:1},              desc:'6 honey' },
+  
+  // Elite Tier Recipe
+  { id:'charcuterie',       name:'Royal Charcuterie', emoji:'🪵', ingredients:{cheese:2, mead:1, truffles:2}, result:{item:'charcuterie',qty:1}, desc:'2 Cheese + 1 Mead + 2 Truffles' }
 ];
 
 const UPGRADES = [
@@ -550,32 +641,48 @@ const UPGRADES = [
   { id:'bulk_craft',    name:'🍽️ Bulk Kitchen',    desc:'Craft recipes use 1 fewer ingredient (min 1).', cost:600, maxLevel:1, effect:()=>{ craftDiscount=1; } },
 ];
 
+const AUTOMATIONS = [
+  { id:'farm_hand',   name:'🧑‍🌾 Farm Hand',    desc:'Automatically clicks a random animal every 4s.', cost:150,  owned:0 },
+  { id:'chef',        name:'🧑‍🍳 Artisan Baker',desc:'Automatically crafts eligible recipes every 8s.', cost:450,  owned:0 },
+  { id:'trucker',     name:'🚚 Logistics Manager', desc:'Automatically runs raw goods to town every 15s.', cost:800, owned:0 }
+];
+
+const WEATHER_TYPES = [
+  { name: 'Sunny ☀️',    color: 'linear-gradient(180deg, #a8c8e8 0%, #c8e8a0 35%, var(--grass-light) 100%)', sunColor: 'radial-gradient(circle, #ffe87a 40%, #ffcc00 100%)', desc: 'Bees produce 50% faster!' },
+  { name: 'Rainy 🌧️',    color: 'linear-gradient(180deg, #64748b 0%, #94a3b8 40%, #475569 100%)', sunColor: 'none', desc: 'Pigs find double the Truffles!' },
+  { name: 'Drought 🍂',  color: 'linear-gradient(180deg, #f59e0b 0%, #ea580c 50%, #7c2d12 100%)', sunColor: 'radial-gradient(circle, #fef08a 20%, #f59e0b 100%)', desc: 'Cows & Goats yield 25% less output.' },
+  { name: 'Overcast ☁️', color: 'linear-gradient(180deg, #cbd5e1 0%, #e2e8f0 60%, var(--grass) 100%)', sunColor: 'none', desc: 'Normal dynamic farming environment.' }
+];
+
 // ══════════════════════════════════════════════════════════
 //  STATE
 // ══════════════════════════════════════════════════════════
-const state = {
+let state = {
   money: 15,
   day: 1,
+  ribbons: 0,
+  lifetimeEarnings: 15,
   inventory: {},
-  // animals[id] = count owned
   animals: { chicken: 0 },
-  // housing[tierId] = true if purchased
   housing: { chicken_coop_s: true },
 };
+
+let buyQtySetting = 1; 
+let currentWeatherIndex = 0;
 
 let autoSpeedMult = 1;
 let clickMult     = 1;
 let sellMult      = 1;
 let craftDiscount = 0;
+
 const animalTimers   = {};
 const animalProgress = {};
 const upgradeOwned   = {};
+const automationOwned = {};
 
 // ══════════════════════════════════════════════════════════
 //  HOUSING HELPERS
 // ══════════════════════════════════════════════════════════
-
-// Returns total capacity for an animal type based on owned tiers
 function getCapacity(animalId) {
   const tiers = HOUSING[animalId].tiers;
   let cap = 0;
@@ -583,17 +690,14 @@ function getCapacity(animalId) {
   return cap;
 }
 
-// Returns the next unowned tier for an animal, or null
 function getNextTier(animalId) {
   return HOUSING[animalId].tiers.find(t => !state.housing[t.id]) || null;
 }
 
-// Is animal unlocked (has at least one tier of housing)?
 function isUnlocked(animalId) {
   return HOUSING[animalId].tiers.some(t => state.housing[t.id]);
 }
 
-// Current animal count
 function animalCount(id) { return state.animals[id] || 0; }
 
 // ══════════════════════════════════════════════════════════
@@ -605,6 +709,7 @@ function addInv(item,q) { state.inventory[item] = (state.inventory[item]||0)+q; 
 
 function addLog(msg) {
   const log = document.getElementById('log');
+  if(!log) return;
   const d = document.createElement('div');
   d.textContent = '▸ ' + msg;
   log.insertBefore(d, log.firstChild);
@@ -619,19 +724,39 @@ function showNotif(msg) {
   el._t = setTimeout(() => el.classList.remove('show'), 2400);
 }
 
+function setBuyQty(amt, btn) {
+  buyQtySetting = amt;
+  document.querySelectorAll('.qty-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderShop();
+}
+
 // ══════════════════════════════════════════════════════════
-//  PRODUCTION
+//  DYNAMIC PRODUCTION (WEATHER AFFECTED)
 // ══════════════════════════════════════════════════════════
 function produce(animalId, isClick=false) {
   const count = animalCount(animalId);
   if (count === 0) return null;
   const a = ANIMALS[animalId];
   let total = 0, lastItem = '';
+  
+  const weatherName = WEATHER_TYPES[currentWeatherIndex].name;
+
   a.produces.forEach(p => {
-    const perAnimal = isClick
-      ? Math.ceil(clickMult)
-      : (p.min + Math.random() * (p.max - p.min));
-    const amount = Math.ceil(perAnimal * count);
+    let perAnimal = p.min + Math.random() * (p.max - p.min);
+    
+    // Dynamic Weather Modifiers
+    if (weatherName.includes('Rainy') && animalId === 'pig') {
+      perAnimal *= 2.0; 
+    } else if (weatherName.includes('Drought') && (animalId === 'cow' || animalId === 'goat')) {
+      perAnimal *= 0.75; 
+    }
+
+    if (isClick) {
+      perAnimal = Math.ceil(clickMult);
+    }
+    
+    let amount = Math.ceil(perAnimal * count);
     addInv(p.item, amount);
     total += amount;
     lastItem = p.item;
@@ -646,11 +771,20 @@ function startAnimalTimer(id) {
   if (animalTimers[id]) clearInterval(animalTimers[id]);
   animalProgress[id] = 0;
   const a = ANIMALS[id];
-  const intervalMs = a.interval * 1000 * autoSpeedMult;
+  
   const tickMs = 500;
   animalTimers[id] = setInterval(() => {
     if (animalCount(id) === 0) return;
-    animalProgress[id] = (animalProgress[id]||0) + tickMs / intervalMs;
+    
+    // Sunny optimization for bees
+    let weatherSpeedMod = 1;
+    if (WEATHER_TYPES[currentWeatherIndex].name.includes('Sunny') && id === 'bee') {
+      weatherSpeedMod = 1.5;
+    }
+
+    const intervalMs = a.interval * 1000 * autoSpeedMult;
+    animalProgress[id] = (animalProgress[id]||0) + (tickMs * weatherSpeedMod) / intervalMs;
+    
     if (animalProgress[id] >= 1) {
       animalProgress[id] = 0;
       produce(id, false);
@@ -673,6 +807,89 @@ function updateProgressBar(id) {
 }
 
 // ══════════════════════════════════════════════════════════
+//  RANDOM GOLDEN CLICK EVENT
+// ══════════════════════════════════════════════════════════
+function spawnGoldenEgg() {
+  const farmScene = document.getElementById('farm-scene-bg');
+  if (!farmScene) return;
+
+  const egg = document.createElement('div');
+  egg.id = 'golden-egg';
+  egg.textContent = '🥚✨';
+  
+  // Random safe placement inside display window
+  const maxX = farmScene.clientWidth - 50;
+  const maxY = farmScene.clientHeight - 80;
+  egg.style.left = Math.floor(Math.random() * maxX) + 'px';
+  egg.style.top = Math.floor(Math.random() * (maxY - 20) + 20) + 'px';
+
+  egg.onclick = (e) => {
+    e.stopPropagation();
+    const cashPrize = Math.max(25, state.lifetimeEarnings * 0.08);
+    state.money += cashPrize;
+    state.lifetimeEarnings += cashPrize;
+    showNotif(`✨ Golden Egg Clicked! Gained ${fmt(cashPrize)}!`);
+    addLog(`Found a rare shimmering Golden Egg worth ${fmt(cashPrize)}`);
+    egg.remove();
+    renderAll();
+  };
+
+  farmScene.appendChild(egg);
+  // despawn safely if player missed it
+  setTimeout(() => { if (egg.parentNode) egg.remove(); }, 4000);
+}
+
+// ══════════════════════════════════════════════════════════
+//  AUTOMATION LOOP ENGINES
+// ══════════════════════════════════════════════════════════
+setInterval(() => {
+  const farmHands = automationOwned['farm_hand'] || 0;
+  if (farmHands <= 0) return;
+  const activeAnimals = Object.keys(state.animals).filter(id => state.animals[id] > 0);
+  if (activeAnimals.length === 0) return;
+  
+  for(let i=0; i<farmHands; i++) {
+    const target = activeAnimals[Math.floor(Math.random() * activeAnimals.length)];
+    produce(target, true);
+  }
+  renderInventory();
+  renderSellBtn();
+}, 4000);
+
+setInterval(() => {
+  const chefs = automationOwned['chef'] || 0;
+  if (chefs <= 0) return;
+  
+  for (let i = 0; i < chefs; i++) {
+    // Attempt crafting down the chain per cook
+    for (const recipe of RECIPES) {
+      const adjIngredients = {};
+      Object.entries(recipe.ingredients).forEach(([item,qty])=>{
+        adjIngredients[item] = Math.max(1, qty - craftDiscount);
+      });
+      const canCraft = Object.entries(adjIngredients).every(([item,qty])=>inv(item)>=qty);
+      if (canCraft) {
+        craftItem(recipe.id, false);
+        break; 
+      }
+    }
+  }
+}, 8000);
+
+setInterval(() => {
+  const truckers = automationOwned['trucker'] || 0;
+  if (truckers <= 0) return;
+  sellAll();
+}, 15000);
+
+// Spawns Golden Event elements every 35s
+setInterval(() => {
+  if (Object.values(state.animals).some(c => c > 0)) {
+    spawnGoldenEgg();
+  }
+}, 35000);
+
+// ══════════════════════════════════════════════════════════
 //  RENDER: LEFT PANEL — ANIMALS
 // ══════════════════════════════════════════════════════════
 function renderAnimals() {
@@ -683,19 +900,16 @@ function renderAnimals() {
     if (!isUnlocked(id)) return;
     const count = animalCount(id);
     const cap   = getCapacity(id);
-    const full  = count >= cap;
     const locked = count === 0;
-
     const produceNames = a.produces.map(p => ITEMS[p.item].emoji+' '+ITEMS[p.item].name).join(', ');
 
-    // Build slots display (max 20 shown)
     const displayCap = Math.min(cap, 20);
     let slots = '';
     for (let i = 0; i < displayCap; i++) {
       const cls = i < count ? 'filled' : '';
       slots += `<div class="slot ${cls}"></div>`;
     }
-    if (cap > 20) slots += `<span style="font-size:0.65rem;color:var(--muted);align-self:center;">+${cap-20}</span>`;
+    if (cap > 20) slots += `<span style="font-size:0.65rem;color:var(--muted);align-self:center;margin-left:2px;">+${cap-20}</span>`;
 
     html += `
       <div class="animal-card ${locked ? 'locked' : ''}" id="acard-${id}" onclick="clickAnimal('${id}')">
@@ -747,7 +961,7 @@ function renderInventory() {
   const grid = document.getElementById('inventory-grid');
   const entries = Object.entries(state.inventory).filter(([,qty])=>qty>0);
   if (!entries.length) {
-    grid.innerHTML = '<div style="grid-column:span 2;font-size:0.8rem;color:var(--muted);font-style:italic;">Click your animals or wait for auto-produce.</div>';
+    grid.innerHTML = '<div style="grid-column:span 2;font-size:0.8rem;color:var(--muted);font-style:italic;">Click your animals or hire helpers to collect output.</div>';
     return;
   }
   grid.innerHTML = entries.map(([item,qty])=>{
@@ -764,12 +978,12 @@ function renderInventory() {
 }
 
 function renderSellBtn() {
-  const rawGoods = ['eggs','milk','wool','truffles','honey','goatmilk'];
-  document.getElementById('sell-all-btn').disabled = !rawGoods.some(r=>inv(r)>0);
+  const allGoods = Object.keys(ITEMS);
+  document.getElementById('sell-all-btn').disabled = !allGoods.some(r=>inv(r)>0);
 }
 
 // ══════════════════════════════════════════════════════════
-//  RENDER: CRAFT
+//  RENDER: CRAFT TREE
 // ══════════════════════════════════════════════════════════
 function renderCraft() {
   const list = document.getElementById('craft-list');
@@ -780,7 +994,9 @@ function renderCraft() {
     });
     const reqText = Object.entries(adjIngredients).map(([item,qty])=>`${ITEMS[item]?.emoji} ${qty} ${ITEMS[item]?.name}`).join(' + ');
     const canCraft = Object.entries(adjIngredients).every(([item,qty])=>inv(item)>=qty);
-    const sellP = (ITEMS[r.result.item]?.sellPrice||0) * sellMult;
+    
+    const prestigeBonus = 1 + (state.ribbons * 0.15);
+    const sellP = (ITEMS[r.result.item]?.sellPrice||0) * sellMult * prestigeBonus;
     return `
       <div class="craft-card">
         <div class="craft-card-header">
@@ -799,13 +1015,34 @@ function renderCraft() {
 }
 
 // ══════════════════════════════════════════════════════════
+//  RENDER: AUTOMATION STAFF TAB
+// ══════════════════════════════════════════════════════════
+function renderAutomation() {
+  const list = document.getElementById('automation-list');
+  list.innerHTML = AUTOMATIONS.map(a => {
+    const currentOwned = automationOwned[a.id] || 0;
+    const scalableCost = a.cost * Math.pow(1.5, currentOwned);
+    const canAfford = state.money >= scalableCost;
+    return `
+      <div class="upg-card">
+        <div class="upg-header">
+          <span class="upg-name">${a.name} (Owned: ${currentOwned})</span>
+          <span class="upg-cost">${fmt(scalableCost)}</span>
+        </div>
+        <div class="upg-desc">${a.desc}</div>
+        <button class="buy-upg-btn" ${canAfford?'':'disabled'} onclick="buyAutomation('${a.id}', ${scalableCost})">Hire Staff</button>
+      </div>
+    `;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════
 //  RENDER: SHOP (RIGHT PANEL)
 // ══════════════════════════════════════════════════════════
 function renderShop() {
   const list = document.getElementById('shop-list');
   let html = '';
 
-  // ── ANIMALS & HOUSING ──
   html += '<div class="shop-section-title">🐾 Animals & Housing</div>';
 
   Object.entries(ANIMALS).forEach(([id, a]) => {
@@ -813,29 +1050,38 @@ function renderShop() {
     const count   = animalCount(id);
     const cap     = getCapacity(id);
     const unlocked = isUnlocked(id);
-    const nextTier = getNextTier(id);
     const animalCost = housing.animalCost;
-    const canBuyAnimal = unlocked && count < cap && state.money >= animalCost;
+    
+    // Calculate buying multiple options
+    let maxAfford = Math.floor(state.money / animalCost);
+    let spaceLeft = cap - count;
+    let purchaseLimit = Math.min(maxAfford, spaceLeft);
+    if(purchaseLimit < 0) purchaseLimit = 0;
+
+    let targetBuyAmt = buyQtySetting === 'MAX' ? purchaseLimit : buyQtySetting;
+    if (targetBuyAmt > spaceLeft) targetBuyAmt = spaceLeft;
+    if (targetBuyAmt <= 0) targetBuyAmt = 1;
+
+    let totalBulkCost = animalCost * targetBuyAmt;
+    const canBuyAnimal = unlocked && count < cap && state.money >= totalBulkCost;
     const atCap = unlocked && count >= cap;
 
     html += `<div class="housing-section">`;
     html += `<div class="housing-section-header">
       <span class="hs-emoji">${a.emoji}</span>
-      <span class="hs-name">${a.name}</span>
+      <span class="hs-name">${a.name} (Own: ${count})</span>
       <span class="hs-animal-cost">${fmt(animalCost)} ea.</span>
     </div>`;
 
-    // Buy animal row
     if (unlocked) {
       html += `<div class="animal-buy-row">
         <span class="occupancy">${count} / ${cap} <strong>${atCap ? '— FULL' : 'housed'}</strong></span>
-        <button class="buy-animal-btn" ${canBuyAnimal?'':'disabled'} onclick="buyAnimal('${id}')">
-          ${atCap ? 'Need Housing' : `Buy ${a.emoji}`}
+        <button class="buy-animal-btn" ${canBuyAnimal?'':'disabled'} onclick="buyAnimal('${id}', ${targetBuyAmt}, ${totalBulkCost})">
+          ${atCap ? 'Need Housing' : `Buy x${targetBuyAmt} (${fmt(totalBulkCost)})`}
         </button>
       </div>`;
     }
 
-    // Housing tiers
     housing.tiers.forEach(t => {
       const owned = !!state.housing[t.id];
       const isNext = !owned && (housing.tiers.findIndex(x=>!state.housing[x.id]) === housing.tiers.indexOf(t));
@@ -857,7 +1103,6 @@ function renderShop() {
     html += `</div>`;
   });
 
-  // ── UPGRADES ──
   html += '<div class="shop-section-title">⬆️ Farm Upgrades</div>';
   UPGRADES.forEach(u => {
     const level  = upgradeOwned[u.id] || 0;
@@ -880,25 +1125,21 @@ function renderShop() {
 //  RENDER: FARM SCENE
 // ══════════════════════════════════════════════════════════
 function renderFarmScene() {
-  // Animals wandering
   const display = document.getElementById('farm-display');
   const icons = [];
   Object.entries(state.animals).forEach(([id,count])=>{
     if (!count) return;
-    const show = Math.min(count, 6);
+    const show = Math.min(count, 5); 
     for (let i=0;i<show;i++) icons.push(ANIMALS[id].emoji);
   });
   display.innerHTML = icons.map(e=>`<span class="farm-animal-icon">${e}</span>`).join('');
 
-  // Buildings
   const bld = document.getElementById('farm-buildings');
   const shown = {};
   Object.entries(state.housing).forEach(([tid])=>{
-    // Find which animal and tier this is
     for (const [aid, h] of Object.entries(HOUSING)) {
       const tier = h.tiers.find(t=>t.id===tid);
       if (tier) {
-        // Only show highest owned tier per animal
         if (!shown[aid] || tier.capacity > shown[aid].cap) {
           shown[aid] = { icon: tier.icon, cap: tier.capacity, name: tier.name };
         }
@@ -914,18 +1155,33 @@ function renderFarmScene() {
 }
 
 // ══════════════════════════════════════════════════════════
+//  PRESTIGE CALCULATION FIELD
+// ══════════════════════════════════════════════════════════
+function updatePrestigeDisplay() {
+  // 1 ribbon per $1000 total baseline lifetime dynamic accumulation
+  let claimable = Math.floor(state.lifetimeEarnings / 1000) - state.ribbons;
+  if(claimable < 0) claimable = 0;
+  
+  const displayCount = document.getElementById('fair-claim-count');
+  if(displayCount) displayCount.textContent = claimable;
+  
+  const btn = document.getElementById('prestige-btn');
+  if(btn) btn.disabled = claimable <= 0;
+}
+
+// ══════════════════════════════════════════════════════════
 //  ACTIONS
 // ══════════════════════════════════════════════════════════
-function buyAnimal(id) {
-  const cost = HOUSING[id].animalCost;
-  const count = animalCount(id);
-  const cap   = getCapacity(id);
-  if (!isUnlocked(id) || count >= cap || state.money < cost) return;
-  state.money -= cost;
-  state.animals[id] = count + 1;
-  addLog(`Bought a ${ANIMALS[id].name} for ${fmt(cost)} (${count+1}/${cap})`);
-  showNotif(`${ANIMALS[id].emoji} New ${ANIMALS[id].name} on the farm!`);
-  if (count === 0) startAnimalTimer(id);
+function buyAnimal(id, count, totalCost) {
+  const currentCount = animalCount(id);
+  const cap = getCapacity(id);
+  if (!isUnlocked(id) || currentCount + count > cap || state.money < totalCost) return;
+  
+  state.money -= totalCost;
+  state.animals[id] = currentCount + count;
+  addLog(`Bought x${count} ${ANIMALS[id].name} for ${fmt(totalCost)}`);
+  showNotif(`${ANIMALS[id].emoji} Added livestock to farm!`);
+  if (currentCount === 0) startAnimalTimer(id);
   renderAll();
 }
 
@@ -949,25 +1205,36 @@ function buyUpgrade(id) {
   upgradeOwned[id] = level + 1;
   upg.effect();
   addLog(`Purchased: ${upg.name}`);
-  showNotif(`⬆️ ${upg.name} upgraded!`);
+  showNotif(`⬆ * ${upg.name} upgraded!`);
+  renderAll();
+}
+
+function buyAutomation(id, currentCost) {
+  if (state.money < currentCost) return;
+  state.money -= currentCost;
+  automationOwned[id] = (automationOwned[id] || 0) + 1;
+  addLog(`Hired automation support structural help: ${id}`);
+  showNotif(`⚙️ Staff member specialized optimized!`);
   renderAll();
 }
 
 function sellAll() {
-  const rawGoods = ['eggs','milk','wool','truffles','honey','goatmilk'];
   let total = 0; let sold = [];
-  rawGoods.forEach(item=>{
+  const prestigeBonus = 1 + (state.ribbons * 0.15);
+
+  Object.keys(ITEMS).forEach(item => {
     const qty = inv(item);
-    if (qty>0){
-      total += qty * ITEMS[item].sellPrice * sellMult;
+    if (qty > 0){
+      total += qty * ITEMS[item].sellPrice * sellMult * prestigeBonus;
       sold.push(`${qty}× ${ITEMS[item].emoji}`);
       state.inventory[item] = 0;
     }
   });
   if (!total) return;
   state.money += total;
-  addLog(`Sold ${sold.join(', ')} for ${fmt(total)}`);
-  showNotif(`💰 Sold for ${fmt(total)}!`);
+  state.lifetimeEarnings += total;
+  addLog(`Sold inventory payload for ${fmt(total)}`);
+  showNotif(`💰 Sold goods for ${fmt(total)}!`);
   renderAll();
 }
 
@@ -984,14 +1251,48 @@ function craftItem(recipeId, all=false) {
     count++;
   } while (all);
   if (!count) return;
-  // Auto sell
+
+  // Process item into instant revenue yield matrix
   const item = recipe.result.item;
   const qty  = state.inventory[item]||0;
-  const earned = qty * (ITEMS[item]?.sellPrice||0) * sellMult;
+  const prestigeBonus = 1 + (state.ribbons * 0.15);
+  const earned = qty * (ITEMS[item]?.sellPrice||0) * sellMult * prestigeBonus;
+  
   state.inventory[item] = 0;
   state.money += earned;
-  addLog(`Crafted & sold ${count}× ${recipe.emoji} ${recipe.name} for ${fmt(earned)}`);
-  showNotif(`🍳 ${count}× ${recipe.name} → ${fmt(earned)}!`);
+  state.lifetimeEarnings += earned;
+  addLog(`Crafted ${count}× ${recipe.emoji} ${recipe.name} producing ${fmt(earned)}`);
+  showNotif(`🍳 Crafted ${recipe.name}! Earned ${fmt(earned)}`);
+  renderAll();
+}
+
+function claimPrestige() {
+  let claimable = Math.floor(state.lifetimeEarnings / 1000) - state.ribbons;
+  if (claimable <= 0) return;
+
+  state.ribbons += claimable;
+  
+  // Hard Wipe Soft Reset Conditions
+  state.money = 15;
+  state.day = 1;
+  state.inventory = {};
+  state.animals = { chicken: 0 };
+  state.housing = { chicken_coop_s: true };
+
+  // Reset modifiers
+  autoSpeedMult = 1;
+  clickMult = 1;
+  sellMult = 1;
+  craftDiscount = 0;
+
+  Object.keys(upgradeOwned).forEach(k => delete upgradeOwned[k]);
+  Object.keys(automationOwned).forEach(k => delete automationOwned[k]);
+  
+  restartAllTimers();
+  
+  document.getElementById('ribbon-display').style.display = 'block';
+  addLog(`🎪 Reset farm to travel to County Fair! Returned with ${claimable} Blue Ribbons!`);
+  showNotif(`🏅 Ribbon Multiplier Active!`);
   renderAll();
 }
 
@@ -1004,30 +1305,56 @@ function switchTab(name, btn) {
   document.getElementById(`tab-${name}`).classList.add('active');
   btn.classList.add('active');
   if (name==='craft') renderCraft();
+  if (name==='automation') renderAutomation();
+  if (name==='fair') updatePrestigeDisplay();
 }
 
 // ══════════════════════════════════════════════════════════
-//  RENDER ALL
+//  RENDER BASELINE INTERFACES
 // ══════════════════════════════════════════════════════════
 function renderAll() {
   document.getElementById('money-display').textContent = fmt(state.money);
   document.getElementById('day-display').textContent   = `Day ${state.day}`;
+  
+  if(state.ribbons > 0) {
+    const rDisplay = document.getElementById('ribbon-display');
+    rDisplay.style.display = 'block';
+    rDisplay.textContent = `🏅 ${state.ribbons} Ribbons`;
+  }
+
   renderAnimals();
   renderInventory();
   renderSellBtn();
   renderCraft();
+  renderAutomation();
   renderShop();
   renderFarmScene();
+  updatePrestigeDisplay();
 }
 
 // ══════════════════════════════════════════════════════════
-//  DAY CYCLE + INIT
+//  DYNAMIC TIME & WEATHER SCHEDULE ROTATION
 // ══════════════════════════════════════════════════════════
-setInterval(()=>{ state.day++; document.getElementById('day-display').textContent=`Day ${state.day}`; }, 60000);
+setInterval(()=>{ 
+  state.day++; 
+  document.getElementById('day-display').textContent=`Day ${state.day}`; 
+  
+  // Weather rolls randomly alongside day increments
+  currentWeatherIndex = Math.floor(Math.random() * WEATHER_TYPES.length);
+  const activeWeather = WEATHER_TYPES[currentWeatherIndex];
+  
+  document.getElementById('weather-display').textContent = activeWeather.name;
+  
+  // Shift DOM scene styles directly
+  const bg = document.getElementById('farm-scene-bg');
+  const sun = document.getElementById('farm-sun');
+  if(bg) bg.style.background = activeWeather.color;
+  if(sun) sun.style.background = activeWeather.sunColor;
 
-// Init — free small coop already owned, no chickens yet
-addLog('Welcome! Build a coop to get started, or buy your first chicken.');
-showNotif('🌾 Welcome to Barnyard! You have a small coop ready.');
+  addLog(`The weather shifted to ${activeWeather.name}. ${activeWeather.desc}`);
+}, 60000);
+
+addLog('Welcome to the country! Build a home or buy a starting animal to cultivate wealth.');
 renderAll();
 </script>
 </body>
