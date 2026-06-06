@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Barnyard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Courier+Prime:wght@400;700&display=swap');
+
+  :root {
+    --soil: #2c1a0e;
+    --bark: #5c3317;
+    --hay: #c8913a;
+    --hay-light: #e8b85a;
+    --grass: #4a7c3f;
+    --grass-light: #6aad5a;
+    --cream: #f5ead0;
+    --parchment: #ede0c4;
+    --ink: #2a1a0a;
+    --sky: #a8c8e8;
+    --red-barn: #8b2020;
+    --gold: #d4a017;
+    --muted: #8a7060;
+    --panel: rgba(245,234,208,0.92);
+    --shadow: rgba(44,26,14,0.3);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--grass);
+    font-family: 'Lora', Georgia, serif;
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(ellipse at 20% 80%, rgba(74,124,63,0.8) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(106,173,90,0.6) 0%, transparent 50%),
+      repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 40px,
+        rgba(0,0,0,0.03) 40px,
+        rgba(0,0,0,0.03) 41px
+      );
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--red-barn);
+    border-bottom: 4px solid var(--soil);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 4px 12px var(--shadow);
+  }
+  header h1 {
+    font-size: 1.8rem;
+    color: var(--cream);
+    letter-spacing: 0.05em;
+    text-shadow: 2px 2px 0 var(--soil);
+  }
+  header h1 span { color: var(--hay-light); }
+
+  #money-display {
+    font-family: 'Courier Prime', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--hay-light);
+    background: var(--soil);
+    padding: 6px 16px;
+    border-radius: 4px;
+    border: 2px solid var(--hay);
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+    min-width: 130px;
+    text-align: right;
+  }
+
+  #day-display {
+    color: var(--parchment);
+    font-size: 0.9rem;
+    font-style: italic;
+    opacity: 0.85;
+  }
+
+  /* ── LAYOUT ── */
+  .game-wrap {
+    display: grid;
+    grid-template-columns: 280px 1fr 260px;
+    gap: 0;
+    min-height: calc(100vh - 60px);
+  }
+
+  /* ── SIDEBAR PANELS ── */
+  .panel {
+    background: var(--panel);
+    border-right: 3px solid var(--bark);
+    padding: 16px 14px;
+    overflow-y: auto;
+    max-height: calc(100vh - 60px);
+  }
+  .panel.right { border-right: none; border-left: 3px solid var(--bark); }
+
+  .panel-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--bark);
+    border-bottom: 2px solid var(--hay);
+    padding-bottom: 6px;
+    margin-bottom: 12px;
+  }
+
+  /* ── ANIMAL CARDS ── */
+  .animal-card {
+    background: var(--cream);
+    border: 2px solid var(--hay);
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s, border-color 0.1s;
+    position: relative;
+    user-select: none;
+  }
+  .animal-card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px var(--shadow); border-color: var(--bark); }
+  .animal-card:active { transform: scale(0.97); }
+  .animal-card.clicking { animation: clk 0.15s ease; }
+
+  @keyframes clk {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.93); }
+    100% { transform: scale(1); }
+  }
+
+  .animal-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .animal-emoji { font-size: 1.6rem; line-height: 1; }
+  .animal-name { font-weight: 700; font-size: 1rem; }
+  .animal-count {
+    margin-left: auto;
+    font-family: 'Courier Prime', monospace;
+    font-weight: 700;
+    font-size: 1rem;
+    background: var(--bark);
+    color: var(--cream);
+    padding: 1px 8px;
+    border-radius: 3px;
+    min-width: 30px;
+    text-align: center;
+  }
+
+  .animal-stats {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-style: italic;
+  }
+  .animal-stats strong { color: var(--bark); font-style: normal; }
+
+  .produce-flash {
+    position: absolute;
+    top: -12px; right: 8px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--grass);
+    pointer-events: none;
+    animation: floatUp 0.9s ease forwards;
+  }
+  @keyframes floatUp {
+    0% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-28px); }
+  }
+
+  /* ── CENTER: FARM ── */
+  .farm-center {
+    padding: 20px;
+    position: relative;
+    overflow-y: auto;
+    max-height: calc(100vh - 60px);
+  }
+
+  .farm-scene {
+    background: linear-gradient(180deg, var(--sky) 0%, #c8e8a0 35%, var(--grass-light) 100%);
+    border: 3px solid var(--soil);
+    border-radius: 8px;
+    padding: 20px;
+    min-height: 260px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 20px var(--shadow);
+    margin-bottom: 16px;
+  }
+
+  .sun {
+    position: absolute;
+    top: 12px; right: 20px;
+    width: 44px; height: 44px;
+    background: radial-gradient(circle, #ffe87a 40%, #ffcc00 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(255,220,0,0.6);
+    animation: sunPulse 3s ease-in-out infinite;
+  }
+  @keyframes sunPulse { 0%,100% { box-shadow: 0 0 20px rgba(255,220,0,0.6); } 50% { box-shadow: 0 0 35px rgba(255,220,0,0.9); } }
+
+  .barn {
+    position: absolute;
+    bottom: 20px; right: 30px;
+    font-size: 3.5rem;
+    line-height: 1;
+    filter: drop-shadow(2px 3px 0 rgba(0,0,0,0.3));
+    transition: font-size 0.4s ease;
+  }
+
+  .farm-animals-display {
+    position: absolute;
+    bottom: 24px;
+    left: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    max-width: 55%;
+  }
+  .farm-animal-icon {
+    font-size: 1.6rem;
+    animation: bounce 2s ease-in-out infinite;
+    display: inline-block;
+    cursor: default;
+  }
+  .farm-animal-icon:nth-child(2n) { animation-delay: 0.3s; }
+  .farm-animal-icon:nth-child(3n) { animation-delay: 0.6s; }
+  .farm-animal-icon:nth-child(4n) { animation-delay: 0.9s; }
+  @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+
+  .farm-title-label {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--bark);
+    font-style: italic;
+    margin-bottom: 4px;
+  }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 14px;
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 8px 6px;
+    background: var(--parchment);
+    border: 2px solid var(--hay);
+    border-radius: 4px 4px 0 0;
+    font-family: 'Lora', serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+  }
+  .tab-btn:hover { background: var(--cream); color: var(--ink); }
+  .tab-btn.active { background: var(--cream); color: var(--bark); border-bottom-color: var(--cream); border-color: var(--bark); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ── INVENTORY ── */
+  .inventory-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .inv-item {
+    background: var(--cream);
+    border: 2px solid var(--hay);
+    border-radius: 5px;
+    padding: 8px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .inv-icon { font-size: 1.3rem; }
+  .inv-info { flex: 1; }
+  .inv-name { font-size: 0.75rem; font-weight: 700; color: var(--bark); }
+  .inv-qty { font-family: 'Courier Prime', monospace; font-size: 1rem; font-weight: 700; }
+
+  /* ── SELL / CRAFT BUTTONS ── */
+  .sell-btn, .craft-btn {
+    width: 100%;
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    font-family: 'Lora', serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+    margin-top: 6px;
+    transition: all 0.15s;
+    letter-spacing: 0.03em;
+  }
+  .sell-btn {
+    background: var(--grass);
+    color: var(--cream);
+    border: 2px solid var(--soil);
+  }
+  .sell-btn:hover { background: var(--grass-light); }
+  .sell-btn:disabled { opacity: 0.4; cursor: default; }
+
+  .craft-btn {
+    background: var(--hay);
+    color: var(--soil);
+    border: 2px solid var(--bark);
+  }
+  .craft-btn:hover { background: var(--hay-light); }
+  .craft-btn:disabled { opacity: 0.4; cursor: default; }
+
+  /* ── SHOP / UPGRADES ── */
+  .shop-item {
+    background: var(--cream);
+    border: 2px solid var(--hay);
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+  .shop-item-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .shop-item-name { font-weight: 700; font-size: 0.95rem; flex: 1; }
+  .shop-item-cost {
+    font-family: 'Courier Prime', monospace;
+    font-weight: 700;
+    color: var(--gold);
+    font-size: 0.95rem;
+  }
+  .shop-item-desc { font-size: 0.75rem; color: var(--muted); font-style: italic; margin-bottom: 8px; }
+
+  .buy-btn {
+    width: 100%;
+    padding: 7px;
+    background: var(--red-barn);
+    color: var(--cream);
+    border: 2px solid var(--soil);
+    border-radius: 4px;
+    font-family: 'Lora', serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .buy-btn:hover { background: #a02828; }
+  .buy-btn:disabled { opacity: 0.4; cursor: default; }
+
+  /* ── LOG ── */
+  #log {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-style: italic;
+    max-height: 120px;
+    overflow-y: auto;
+    border-top: 1px solid var(--hay);
+    padding-top: 8px;
+    margin-top: 8px;
+  }
+  #log div { margin-bottom: 3px; }
+  #log div:first-child { color: var(--bark); font-style: normal; font-weight: 600; }
+
+  /* ── CRAFT SECTION ── */
+  .craft-card {
+    background: var(--cream);
+    border: 2px solid var(--hay);
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+  .craft-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .craft-card-name { font-weight: 700; font-size: 0.95rem; flex: 1; }
+  .craft-sell-price { font-family: 'Courier Prime', monospace; font-size: 0.9rem; color: var(--gold); font-weight: 700; }
+  .craft-req { font-size: 0.75rem; color: var(--muted); margin-bottom: 6px; }
+
+  /* ── PROGRESS BAR ── */
+  .produce-progress {
+    height: 4px;
+    background: #ddd;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  .produce-fill {
+    height: 100%;
+    background: var(--grass);
+    border-radius: 2px;
+    transition: width 0.5s linear;
+  }
+
+  /* ── NOTIFICATION ── */
+  #notif {
+    position: fixed;
+    bottom: 20px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--soil);
+    color: var(--cream);
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.95rem;
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    border: 2px solid var(--hay);
+    white-space: nowrap;
+  }
+  #notif.show { opacity: 1; }
+
+  scrollbar-width: thin;
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--parchment); }
+  ::-webkit-scrollbar-thumb { background: var(--hay); border-radius: 3px; }
+
+  .section-divider {
+    border: none;
+    border-top: 1px dashed var(--hay);
+    margin: 12px 0;
+  }
+
+  .upgrade-owned {
+    background: #e8f5e8;
+    border-color: var(--grass);
+    opacity: 0.7;
+  }
+  .upgrade-owned .buy-btn { background: var(--grass); }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>🌾 <span>Barnyard</span></h1>
+    <div id="day-display">Day 1</div>
+  </div>
+  <div id="money-display">$0.00</div>
+</header>
+
+<div class="game-wrap">
+
+  <!-- LEFT: Animals -->
+  <div class="panel" id="animals-panel">
+    <div class="panel-title">Your Animals</div>
+    <div id="animals-list"></div>
+    <hr class="section-divider">
+    <div class="panel-title">Click to Collect!</div>
+    <div style="font-size:0.78rem;color:var(--muted);font-style:italic;line-height:1.5;">
+      Click an animal to collect its produce. Animals also auto-produce over time.
+    </div>
+  </div>
+
+  <!-- CENTER -->
+  <div class="farm-center">
+    <!-- Scene -->
+    <div class="farm-scene">
+      <div class="sun"></div>
+      <div class="barn" id="barn-icon">🏚️</div>
+      <div class="farm-animals-display" id="farm-display"></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('inventory')">📦 Inventory</button>
+      <button class="tab-btn" onclick="switchTab('craft')">🍳 Craft</button>
+      <button class="tab-btn" onclick="switchTab('log')">📜 Log</button>
+    </div>
+
+    <!-- Inventory Tab -->
+    <div class="tab-content active" id="tab-inventory">
+      <div class="inventory-grid" id="inventory-grid"></div>
+      <button class="sell-btn" onclick="sellAll()" id="sell-all-btn">Sell All Raw Goods</button>
+    </div>
+
+    <!-- Craft Tab -->
+    <div class="tab-content" id="tab-craft">
+      <div id="craft-list"></div>
+    </div>
+
+    <!-- Log Tab -->
+    <div class="tab-content" id="tab-log">
+      <div id="log"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Shop -->
+  <div class="panel right" id="shop-panel">
+    <div class="panel-title">Market & Upgrades</div>
+    <div id="shop-list"></div>
+  </div>
+
+</div>
+
+<div id="notif"></div>
+
+<script>
+// ══════════════════════════════════════════════
+//  GAME STATE
+// ══════════════════════════════════════════════
+const state = {
+  money: 10,
+  day: 1,
+  inventory: {},
+  animals: {},
+  upgrades: {},
+  totalEarned: 0,
+};
+
+// ── ANIMALS ──
+const ANIMALS = {
+  chicken: {
+    name: 'Chicken', emoji: '🐔',
+    produces: [{ item: 'eggs', min: 1, max: 3 }],
+    interval: 8,    // seconds per auto-produce
+    clickYield: 1,
+    baseCost: 10,
+    costMult: 1.4,
+    desc: 'Lays eggs. Cluck.',
+  },
+  cow: {
+    name: 'Cow', emoji: '🐄',
+    produces: [{ item: 'milk', min: 1, max: 2 }],
+    interval: 15,
+    clickYield: 1,
+    baseCost: 60,
+    costMult: 1.5,
+    desc: 'Produces milk daily.',
+  },
+  sheep: {
+    name: 'Sheep', emoji: '🐑',
+    produces: [{ item: 'wool', min: 1, max: 2 }],
+    interval: 20,
+    clickYield: 1,
+    baseCost: 80,
+    costMult: 1.5,
+    desc: 'Grows soft wool.',
+  },
+  pig: {
+    name: 'Pig', emoji: '🐷',
+    produces: [{ item: 'truffles', min: 1, max: 1 }],
+    interval: 30,
+    clickYield: 1,
+    baseCost: 150,
+    costMult: 1.6,
+    desc: 'Sniffs out rare truffles.',
+  },
+  bee: {
+    name: 'Beehive', emoji: '🐝',
+    produces: [{ item: 'honey', min: 1, max: 2 }],
+    interval: 12,
+    clickYield: 1,
+    baseCost: 120,
+    costMult: 1.55,
+    desc: 'Buzzes, makes honey.',
+  },
+  goat: {
+    name: 'Goat', emoji: '🐐',
+    produces: [{ item: 'goatmilk', min: 1, max: 2 }],
+    interval: 14,
+    clickYield: 1,
+    baseCost: 200,
+    costMult: 1.6,
+    desc: 'Fancy goat milk.',
+  },
+};
+
+// ── ITEMS ──
+const ITEMS = {
+  eggs:      { name: 'Eggs',        emoji: '🥚', sellPrice: 2 },
+  milk:      { name: 'Milk',        emoji: '🥛', sellPrice: 4 },
+  wool:      { name: 'Wool',        emoji: '🧶', sellPrice: 5 },
+  truffles:  { name: 'Truffles',    emoji: '🍄', sellPrice: 20 },
+  honey:     { name: 'Honey',       emoji: '🍯', sellPrice: 8 },
+  goatmilk:  { name: 'Goat Milk',   emoji: '🫙', sellPrice: 6 },
+  omelette:  { name: 'Omelette',    emoji: '🍳', sellPrice: 12 },
+  cheese:    { name: 'Cheese',      emoji: '🧀', sellPrice: 18 },
+  sweater:   { name: 'Sweater',     emoji: '🧥', sellPrice: 40 },
+  cake:      { name: 'Cake',        emoji: '🎂', sellPrice: 55 },
+  truffle_omelette: { name: 'Truffle Omelette', emoji: '🍽️', sellPrice: 80 },
+  goat_cheese: { name: 'Goat Cheese', emoji: '🫕', sellPrice: 35 },
+  mead:      { name: 'Mead',        emoji: '🍺', sellPrice: 60 },
+};
+
+// ── RECIPES ──
+const RECIPES = [
+  {
+    id: 'omelette',
+    name: 'Omelette',
+    emoji: '🍳',
+    ingredients: { eggs: 3 },
+    result: { item: 'omelette', qty: 1 },
+    desc: '3 eggs → 1 Omelette',
+  },
+  {
+    id: 'cheese',
+    name: 'Cheese',
+    emoji: '🧀',
+    ingredients: { milk: 4 },
+    result: { item: 'cheese', qty: 1 },
+    desc: '4 milk → 1 Cheese',
+  },
+  {
+    id: 'sweater',
+    name: 'Sweater',
+    emoji: '🧥',
+    ingredients: { wool: 6 },
+    result: { item: 'sweater', qty: 1 },
+    desc: '6 wool → 1 Sweater',
+  },
+  {
+    id: 'cake',
+    name: 'Honey Cake',
+    emoji: '🎂',
+    ingredients: { eggs: 4, honey: 3 },
+    result: { item: 'cake', qty: 1 },
+    desc: '4 eggs + 3 honey → Cake',
+  },
+  {
+    id: 'truffle_omelette',
+    name: 'Truffle Omelette',
+    emoji: '🍽️',
+    ingredients: { eggs: 5, truffles: 1 },
+    result: { item: 'truffle_omelette', qty: 1 },
+    desc: '5 eggs + 1 truffle',
+  },
+  {
+    id: 'goat_cheese',
+    name: 'Goat Cheese',
+    emoji: '🫕',
+    ingredients: { goatmilk: 4 },
+    result: { item: 'goat_cheese', qty: 1 },
+    desc: '4 goat milk → Goat Cheese',
+  },
+  {
+    id: 'mead',
+    name: 'Mead',
+    emoji: '🍺',
+    ingredients: { honey: 6 },
+    result: { item: 'mead', qty: 1 },
+    desc: '6 honey → Mead',
+  },
+];
+
+// ── SHOP ITEMS ──
+const SHOP = [
+  { id: 'chicken', type: 'animal' },
+  { id: 'cow',     type: 'animal' },
+  { id: 'sheep',   type: 'animal' },
+  { id: 'bee',     type: 'animal' },
+  { id: 'pig',     type: 'animal' },
+  { id: 'goat',    type: 'animal' },
+  {
+    id: 'better_barn',
+    type: 'upgrade',
+    name: '🏡 Bigger Barn',
+    desc: 'Upgrade the barn. All auto-produce 25% faster.',
+    cost: 200,
+    maxLevel: 3,
+    effect: () => { autoSpeedMult = Math.max(0.3, autoSpeedMult - 0.25); }
+  },
+  {
+    id: 'feed_upgrade',
+    type: 'upgrade',
+    name: '🌽 Premium Feed',
+    desc: 'Better feed — click yield doubled for all animals.',
+    cost: 150,
+    maxLevel: 1,
+    effect: () => { clickMult *= 2; }
+  },
+  {
+    id: 'auto_collect',
+    type: 'upgrade',
+    name: '🤖 Auto-Collector',
+    desc: 'Automatically collects produce every 2x faster.',
+    cost: 300,
+    maxLevel: 1,
+    effect: () => { autoSpeedMult = Math.max(0.1, autoSpeedMult - 0.4); }
+  },
+  {
+    id: 'market_stand',
+    type: 'upgrade',
+    name: '🛒 Market Stand',
+    desc: 'Sell prices +25% for all raw goods.',
+    cost: 400,
+    maxLevel: 1,
+    effect: () => { sellMult += 0.25; }
+  },
+];
+
+// ── GLOBALS ──
+let autoSpeedMult = 1;
+let clickMult = 1;
+let sellMult = 1;
+const animalTimers = {};
+const animalProgress = {};
+
+// ══════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════
+function fmt(n) { return '$' + n.toFixed(2); }
+function inv(item) { return state.inventory[item] || 0; }
+function addInv(item, qty) {
+  state.inventory[item] = (state.inventory[item] || 0) + qty;
+}
+function animalCount(id) { return state.animals[id] || 0; }
+function animalCost(id) {
+  const a = ANIMALS[id];
+  const owned = animalCount(id);
+  return Math.floor(a.baseCost * Math.pow(a.costMult, owned));
+}
+function upgLevel(id) { return state.upgrades[id] || 0; }
+
+function addLog(msg) {
+  const log = document.getElementById('log');
+  const d = document.createElement('div');
+  d.textContent = '▸ ' + msg;
+  log.insertBefore(d, log.firstChild);
+  while (log.children.length > 40) log.removeChild(log.lastChild);
+}
+
+function showNotif(msg) {
+  const el = document.getElementById('notif');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+// ══════════════════════════════════════════════
+//  PRODUCE
+// ══════════════════════════════════════════════
+function produce(animalId, qty = null) {
+  const a = ANIMALS[animalId];
+  const count = animalCount(animalId);
+  if (count === 0) return;
+  let total = 0;
+  let lastItem = '';
+  a.produces.forEach(p => {
+    const amount = qty !== null ? qty : Math.ceil(
+      (p.min + Math.random() * (p.max - p.min)) * count * clickMult
+    );
+    addInv(p.item, amount);
+    total += amount;
+    lastItem = p.item;
+  });
+  return { total, item: lastItem };
+}
+
+// ══════════════════════════════════════════════
+//  ANIMAL TIMERS
+// ══════════════════════════════════════════════
+function startAnimalTimer(id) {
+  if (animalTimers[id]) clearInterval(animalTimers[id]);
+  animalProgress[id] = 0;
+  const a = ANIMALS[id];
+  const intervalMs = a.interval * 1000 * autoSpeedMult;
+  const tickMs = 500;
+
+  animalTimers[id] = setInterval(() => {
+    if (animalCount(id) === 0) return;
+    animalProgress[id] = (animalProgress[id] || 0) + tickMs / intervalMs;
+    if (animalProgress[id] >= 1) {
+      animalProgress[id] = 0;
+      produce(id);
+      renderInventory();
+      renderSellBtn();
+    }
+    updateProgressBar(id);
+  }, tickMs);
+}
+
+function restartAllTimers() {
+  Object.keys(ANIMALS).forEach(id => {
+    if (animalCount(id) > 0) startAnimalTimer(id);
+  });
+}
+
+function updateProgressBar(id) {
+  const bar = document.getElementById(`prog-${id}`);
+  if (bar) bar.style.width = Math.min(100, (animalProgress[id] || 0) * 100) + '%';
+}
+
+// ══════════════════════════════════════════════
+//  RENDER
+// ══════════════════════════════════════════════
+function renderMoney() {
+  document.getElementById('money-display').textContent = fmt(state.money);
+}
+
+function renderAnimals() {
+  const list = document.getElementById('animals-list');
+  list.innerHTML = '';
+  Object.entries(ANIMALS).forEach(([id, a]) => {
+    const count = animalCount(id);
+    if (count === 0) return;
+    const card = document.createElement('div');
+    card.className = 'animal-card';
+    card.id = `acard-${id}`;
+    const produceNames = a.produces.map(p => ITEMS[p.item].emoji + ' ' + ITEMS[p.item].name).join(', ');
+    card.innerHTML = `
+      <div class="animal-header">
+        <span class="animal-emoji">${a.emoji}</span>
+        <span class="animal-name">${a.name}</span>
+        <span class="animal-count">${count}</span>
+      </div>
+      <div class="animal-stats">
+        Produces: <strong>${produceNames}</strong><br>
+        Click to collect!
+      </div>
+      <div class="produce-progress"><div class="produce-fill" id="prog-${id}" style="width:0%"></div></div>
+    `;
+    card.addEventListener('click', () => clickAnimal(id, card));
+    list.appendChild(card);
+  });
+  if (list.innerHTML === '') {
+    list.innerHTML = '<div style="font-size:0.8rem;color:var(--muted);font-style:italic;">Buy animals from the Market →</div>';
+  }
+}
+
+function clickAnimal(id, card) {
+  const result = produce(id);
+  if (!result) return;
+  card.classList.remove('clicking');
+  void card.offsetWidth;
+  card.classList.add('clicking');
+
+  // Float-up text
+  const flash = document.createElement('div');
+  flash.className = 'produce-flash';
+  flash.textContent = `+${result.total} ${ITEMS[result.item]?.emoji || ''}`;
+  card.appendChild(flash);
+  setTimeout(() => flash.remove(), 900);
+
+  renderInventory();
+  renderSellBtn();
+}
+
+function renderInventory() {
+  const grid = document.getElementById('inventory-grid');
+  const entries = Object.entries(state.inventory).filter(([, qty]) => qty > 0);
+  if (entries.length === 0) {
+    grid.innerHTML = '<div style="grid-column:span 2;font-size:0.8rem;color:var(--muted);font-style:italic;">Collect from your animals to fill inventory.</div>';
+    return;
+  }
+  grid.innerHTML = entries.map(([item, qty]) => {
+    const def = ITEMS[item];
+    if (!def) return '';
+    return `
+      <div class="inv-item">
+        <span class="inv-icon">${def.emoji}</span>
+        <div class="inv-info">
+          <div class="inv-name">${def.name}</div>
+          <div class="inv-qty">${qty}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderSellBtn() {
+  const btn = document.getElementById('sell-all-btn');
+  const rawGoods = ['eggs','milk','wool','truffles','honey','goatmilk'];
+  const hasRaw = rawGoods.some(r => inv(r) > 0);
+  btn.disabled = !hasRaw;
+}
+
+function renderCraft() {
+  const list = document.getElementById('craft-list');
+  list.innerHTML = RECIPES.map(r => {
+    const reqText = Object.entries(r.ingredients).map(([item, qty]) => `${ITEMS[item]?.emoji} ${qty} ${ITEMS[item]?.name}`).join(' + ');
+    const canCraft = Object.entries(r.ingredients).every(([item, qty]) => inv(item) >= qty);
+    const sellP = ITEMS[r.result.item]?.sellPrice || 0;
+    return `
+      <div class="craft-card">
+        <div class="craft-card-header">
+          <span style="font-size:1.4rem">${r.emoji}</span>
+          <span class="craft-card-name">${r.name}</span>
+          <span class="craft-sell-price">${fmt(sellP * sellMult)}</span>
+        </div>
+        <div class="craft-req">${reqText}</div>
+        <div style="display:flex;gap:6px;">
+          <button class="craft-btn" style="flex:1" ${canCraft ? '' : 'disabled'} onclick="craftItem('${r.id}')">Craft 1</button>
+          <button class="craft-btn" style="flex:1" ${canCraft ? '' : 'disabled'} onclick="craftItem('${r.id}', true)">Craft All</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderShop() {
+  const list = document.getElementById('shop-list');
+  let html = '<div class="panel-title" style="margin-bottom:12px">Animals</div>';
+
+  Object.entries(ANIMALS).forEach(([id, a]) => {
+    const cost = animalCost(id);
+    const owned = animalCount(id);
+    const canAfford = state.money >= cost;
+    html += `
+      <div class="shop-item">
+        <div class="shop-item-header">
+          <span style="font-size:1.3rem">${a.emoji}</span>
+          <span class="shop-item-name">${a.name} ${owned > 0 ? `(${owned})` : ''}</span>
+          <span class="shop-item-cost">${fmt(cost)}</span>
+        </div>
+        <div class="shop-item-desc">${a.desc}</div>
+        <button class="buy-btn" ${canAfford ? '' : 'disabled'} onclick="buyAnimal('${id}')">Buy</button>
+      </div>
+    `;
+  });
+
+  html += '<hr class="section-divider"><div class="panel-title" style="margin-bottom:12px">Upgrades</div>';
+
+  SHOP.filter(s => s.type === 'upgrade').forEach(u => {
+    const level = upgLevel(u.id);
+    const maxed = level >= (u.maxLevel || 1);
+    const canAfford = state.money >= u.cost && !maxed;
+    html += `
+      <div class="shop-item ${maxed ? 'upgrade-owned' : ''}">
+        <div class="shop-item-header">
+          <span class="shop-item-name">${u.name}</span>
+          <span class="shop-item-cost">${maxed ? '✓' : fmt(u.cost)}</span>
+        </div>
+        <div class="shop-item-desc">${u.desc}</div>
+        <button class="buy-btn" ${canAfford ? '' : 'disabled'} onclick="buyUpgrade('${u.id}')">${maxed ? 'Owned' : 'Purchase'}</button>
+      </div>
+    `;
+  });
+
+  list.innerHTML = html;
+}
+
+function renderFarmScene() {
+  const display = document.getElementById('farm-display');
+  const allIcons = [];
+  Object.entries(state.animals).forEach(([id, count]) => {
+    const a = ANIMALS[id];
+    const show = Math.min(count, 5);
+    for (let i = 0; i < show; i++) allIcons.push(a.emoji);
+  });
+  display.innerHTML = allIcons.map(e => `<span class="farm-animal-icon">${e}</span>`).join('');
+
+  // Barn upgrade
+  const barnLevel = upgLevel('better_barn');
+  const barnIcons = ['🏚️', '🏠', '🏡', '🏰'];
+  document.getElementById('barn-icon').textContent = barnIcons[Math.min(barnLevel, 3)];
+}
+
+function renderAll() {
+  renderMoney();
+  renderAnimals();
+  renderInventory();
+  renderSellBtn();
+  renderCraft();
+  renderShop();
+  renderFarmScene();
+  document.getElementById('day-display').textContent = `Day ${state.day}`;
+}
+
+// ══════════════════════════════════════════════
+//  ACTIONS
+// ══════════════════════════════════════════════
+function buyAnimal(id) {
+  const cost = animalCost(id);
+  if (state.money < cost) return;
+  state.money -= cost;
+  state.animals[id] = (state.animals[id] || 0) + 1;
+  const a = ANIMALS[id];
+  addLog(`Bought a ${a.name} for ${fmt(cost)}`);
+  showNotif(`🐾 New ${a.name} added to the farm!`);
+  if (animalCount(id) === 1) startAnimalTimer(id);
+  renderAll();
+}
+
+function buyUpgrade(id) {
+  const upg = SHOP.find(s => s.id === id);
+  if (!upg || state.money < upg.cost) return;
+  const level = upgLevel(id);
+  if (level >= (upg.maxLevel || 1)) return;
+  state.money -= upg.cost;
+  state.upgrades[id] = level + 1;
+  upg.effect();
+  addLog(`Purchased upgrade: ${upg.name}`);
+  showNotif(`⬆️ ${upg.name} purchased!`);
+  restartAllTimers();
+  renderAll();
+}
+
+function sellAll() {
+  const rawGoods = ['eggs','milk','wool','truffles','honey','goatmilk'];
+  let total = 0;
+  let sold = [];
+  rawGoods.forEach(item => {
+    const qty = inv(item);
+    if (qty > 0) {
+      const earned = qty * ITEMS[item].sellPrice * sellMult;
+      total += earned;
+      sold.push(`${qty}x ${ITEMS[item].emoji}`);
+      state.inventory[item] = 0;
+    }
+  });
+  if (total === 0) return;
+  state.money += total;
+  state.totalEarned += total;
+  addLog(`Sold ${sold.join(', ')} for ${fmt(total)}`);
+  showNotif(`💰 Sold for ${fmt(total)}!`);
+  renderAll();
+}
+
+function craftItem(recipeId, all = false) {
+  const recipe = RECIPES.find(r => r.id === recipeId);
+  if (!recipe) return;
+  let count = 0;
+  do {
+    const canCraft = Object.entries(recipe.ingredients).every(([item, qty]) => inv(item) >= qty);
+    if (!canCraft) break;
+    Object.entries(recipe.ingredients).forEach(([item, qty]) => {
+      state.inventory[item] = (state.inventory[item] || 0) - qty;
+    });
+    addInv(recipe.result.item, recipe.result.qty);
+    count++;
+  } while (all);
+
+  if (count === 0) return;
+
+  // Auto-sell crafted items
+  const item = recipe.result.item;
+  const qty = state.inventory[item] || 0;
+  const earned = qty * (ITEMS[item]?.sellPrice || 0) * sellMult;
+  state.inventory[item] = 0;
+  state.money += earned;
+  state.totalEarned += earned;
+  addLog(`Crafted & sold ${count}x ${recipe.emoji} ${recipe.name} for ${fmt(earned)}`);
+  showNotif(`🍳 Crafted ${count}x ${recipe.name} → ${fmt(earned)}!`);
+  renderAll();
+}
+
+// ══════════════════════════════════════════════
+//  TABS
+// ══════════════════════════════════════════════
+function switchTab(name) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`tab-${name}`).classList.add('active');
+  event.target.classList.add('active');
+  if (name === 'craft') renderCraft();
+}
+
+// ══════════════════════════════════════════════
+//  DAY CYCLE
+// ══════════════════════════════════════════════
+setInterval(() => {
+  state.day++;
+  document.getElementById('day-display').textContent = `Day ${state.day}`;
+}, 60000);
+
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+// Start with 1 free chicken
+state.animals.chicken = 1;
+startAnimalTimer('chicken');
+addLog('Welcome to the farm! Your first chicken is free.');
+showNotif('🐔 Your farm is open for business!');
+renderAll();
+</script>
+</body>
+</html>
